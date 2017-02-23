@@ -41,6 +41,6 @@ also planned.
     +  `./download-bike-data.sh`
     +  `./download-taxi-data.sh`
     +  `./download-uber-data.sh`
-    +  `decompress.sh`
+    +  `./decompress.sh`
 
 3. TODO
