@@ -87,3 +87,6 @@ ENV/
 
 # Rope project settings
 .ropeproject
+
+# Raw CSV and txt data
+download_scripts/raw_data
