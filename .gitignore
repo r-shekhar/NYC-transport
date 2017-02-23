@@ -89,4 +89,4 @@ ENV/
 .ropeproject
 
 # Raw CSV and txt data
-download_scripts/raw_data
+00_download_scripts/raw_data

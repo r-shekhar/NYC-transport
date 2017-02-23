@@ -4,7 +4,7 @@ This is a combined repository of all publicly available New York City transit
 datasets. 
 
 - Taxi and Limousine Commission (TLC) Taxi trip Data
-- FOIA requested Uber trip data for portions of 2013-2014
+- FOIA requested Uber trip data for portions of 2013-2015
 - Subway turnstile data from the Metropolitan Transit Authority (MTA)
 - Citibike system data
 
@@ -34,7 +34,7 @@ also planned.
         distributed
     ```
 
-2. Download the data in the `download_scripts` directory
+2. Download the data in the `00_download_scripts` directory
     +  `./make_directories.sh` -- Alternatively you can create a `raw_data` 
        directory elsewhere and symlink it.
     +  `python download-subway-data.py`
