@@ -17,7 +17,8 @@ def main():
     df = dd.read_csv('../00_download_scripts/raw_data/bike/2*iti*.csv',
                      #compression='gzip', 
                      parse_dates=[1,2,], 
-                     blocksize=500*(2**20), 
+                     infer_datetime_format = True,
+                     # blocksize=500*(2**20), 
                      na_values=["\\N"],
                      header=0,
                      names=schema,
@@ -37,18 +38,9 @@ def main():
                          'gender':                            np.int32,
                      }
     )
+    df = df.repartition(npartitions=32)
+    df.to_parquet('/data3/citibike.parq', compression="SNAPPY")
 
-    df.dtypes
-
-    df.head()
-
-    #df = client.persist(df.set_index("start_time", npartitions=64))
-    df.to_parquet('/data2/citibike.parq', compression="SNAPPY") 
-
-    del df
-    df = dd.read_parquet('/data2/citibike.parq')
-
-    df.head()
 
 if __name__ == '__main__':
     client = Client()
