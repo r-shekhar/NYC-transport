@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-from dask.distributed import Client
+# from dask.distributed import Client
 import dask.dataframe as dd
 import numpy as np
 import pandas as pd
@@ -39,9 +39,10 @@ def main():
                      }
     )
     df = df.repartition(npartitions=32)
-    df.to_parquet('/data3/citibike.parq', compression="SNAPPY")
+    # df.to_parquet('/data3/citibike.parq', compression="SNAPPY")
+    df = df.compute()
+    df.to_hdf('/data4/citibike.hdf', '/data', complevel=1, complib='blosc')
 
 
 if __name__ == '__main__':
-    client = Client()
     main()

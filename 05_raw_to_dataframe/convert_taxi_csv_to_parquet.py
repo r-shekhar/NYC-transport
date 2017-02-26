@@ -6,7 +6,11 @@ import dask.dataframe as dd
 import numpy as np
 import pandas as pd
 from glob import glob
+import sys
+from dask import delayed
 
+from dask.utils import SerializableLock
+lock = SerializableLock()
 
 def main(client):
 
@@ -32,15 +36,14 @@ def main(client):
     yellow_schema_2016_h2="vendor_id,pickup_datetime,dropoff_datetime,passenger_count,trip_distance,rate_code_id,store_and_fwd_flag,pickup_location_id,dropoff_location_id,payment_type,fare_amount,extra,mta_tax,tip_amount,tolls_amount,improvement_surcharge,total_amount,junk1,junk2"
     yellow_glob_2016_h2 = glob('../00_download_scripts/raw_data/taxi/yellow_tripdata_2016-0[7-9].csv') + glob('../raw_data/taxi/yellow_tripdata_2016-1[0-2].csv')
 
-
-
-    x=0
-    s = []
-    for x in [x for x in locals() if 'schema' in x]:
-        s.append(set((locals()[x]).split(',')))
-    s = sorted(set.union(*s))
-    dtype_list = dict(zip(s, [object,]*len(s)))
-    dtype_list
+    ## Uncomment this block to get a printout of fields in the csv files
+    # x=0
+    # s = []
+    # for x in [x for x in locals() if 'schema' in x]:
+    #     s.append(set((locals()[x]).split(',')))
+    # s = sorted(set.union(*s))
+    # dtype_list = dict(zip(s, [object,]*len(s)))
+    # print(dtype_list)
 
 
     # ### Actually declare the dtypes I want to use 
@@ -86,7 +89,7 @@ def main(client):
     green1['pickup_location_id'] = green1['rate_code_id'].copy()
     green1['pickup_location_id'] = -999
     green1['improvement_surcharge'] = green1['total_amount'].copy()
-    green1['improvement_surcharge'] = 0.
+    green1['improvement_surcharge'] = np.nan
     green1 = green1.drop(['junk1', 'junk2'], axis=1)
 
 
@@ -136,9 +139,22 @@ def main(client):
         green2[sorted(green1.columns)])
     green = green.append(green3[sorted(green1.columns)])
     green = green.append(green4[sorted(green1.columns)])
-    green = green.repartition(npartitions=100)
+    green = green.repartition(npartitions=20)
 
-    green.to_parquet('/data3/green.parq', compression="SNAPPY")
+    # green = client.persist(green)
+
+    ## To_hdf is well tested and works, but unfortunately is really slow to 
+    ## load into postgresql through Pandas. 
+    green.to_hdf('/data4/green/green-*.hdf', '/data', complib='blosc', complevel=1, lock=lock)
+
+    ## To_parquet is currently (2017 Feb) alpha software, and seems to create
+    ## bad files where some data is corrupted when reading the files back in.
+    # green.to_parquet('/data3/green.parq', compression="SNAPPY", has_nulls=True,
+    #     object_encoding='json')
+
+    ## Sadly this is the only format that works flawlessly.
+    green.to_csv('/data4/green/green-*.csv')
+
 
     #----------------------------------------------------------------------
 
@@ -201,10 +217,22 @@ def main(client):
     yellow = yellow1[sorted(yellow1.columns)].append(
         yellow2[sorted(yellow1.columns)])
     yellow = yellow.append(yellow3[sorted(yellow1.columns)])
-    yellow = yellow.repartition(npartitions=1000)
 
+    yellow = yellow.repartition(npartitions=560)
+    # yellow = client.persist(yellow)
 
-    yellow.to_parquet('/data3/yellow.parq', compression="SNAPPY")
+    ## To_hdf is well tested and works, but unfortunately is really slow to 
+    ## load into postgresql through Pandas. 
+    yellow.to_hdf('/data4/yellow/yellow-*.hdf', '/data', complib='blosc', complevel=1, lock=lock)
+
+    ## To_parquet is currently (2017 Feb) alpha software, and seems to create
+    ## bad files where some data is corrupted when reading the files back in.
+    ## Let's hope it's fixed someday. 
+    # yellow.to_parquet('/data3/yellow.parq', compression="SNAPPY", has_nulls=True)
+
+    ## Sadly this is the only format that works flawlessly.
+    yellow.to_csv('/data4/yellow/yellow-*.csv')
+
 
 if __name__ == '__main__':
     client = Client()
