@@ -23,8 +23,7 @@ with open('config.json', 'r') as fh:
 
 def main(client):
     df = dd.read_csv(
-        glob(os.path.join(config["citibike_raw_data_path"], '2*iti*.csv')),
-        # compression='gzip',
+        sorted(glob(os.path.join(config["citibike_raw_data_path"], '2*iti*.csv'))),
         parse_dates=[1, 2, ],
         infer_datetime_format=True,
         # blocksize=500*(2**20),
@@ -47,26 +46,20 @@ def main(client):
             'gender':                            np.int32,
         }
     )
+    df = df.set_index('start_time', npartitions=200, compute=False)
+    df = df.categorize()
     df = df.repartition(npartitions=32)
 
     # This is buggy -- The file cannot always be read back in. There must be
     # a race condition somewhere. Instead we load df into memory and use
     # fastparquet directly (instead of through dask layer) below.
-    # df.to_parquet('/data3/citibike.parq', compression="SNAPPY")
+    df.to_parquet(
+        os.path.join(config['parquet_output_path'], 'citibike.parquet'), 
+        compression="SNAPPY")
 
     df = df.compute()
-
     p = os.path.join(config['hdf_output_path'], 'citibike.hdf')
-    df.to_hdf(p, '/data', complevel=1, complib='blosc')
-
-    fastparquet.write(
-        os.path.join(config['parquet_output_path'], 'citibike.parquet'),
-        df,
-        row_group_offsets=100000,
-        has_nulls=True,
-        file_scheme='hive',
-        compression='SNAPPY',
-        object_encoding='utf8')
+    df.to_hdf(p, '/data', complevel=1, complib='blosc', format='table')
 
     df.to_csv(os.path.join(config['csv_output_path'], 'citibike.csv'),
         float_format='%.8g',
