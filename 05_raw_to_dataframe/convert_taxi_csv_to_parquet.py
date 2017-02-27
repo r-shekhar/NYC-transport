@@ -1,40 +1,52 @@
 #!/usr/bin/env python
 # coding: utf-8
 
+from dask import delayed
 from dask.distributed import Client
+from dask.utils import SerializableLock
+
 import dask.dataframe as dd
+import fastparquet
+import json
 import numpy as np
 import pandas as pd
-from glob import glob
-import sys
-from dask import delayed
+import os, sys
 
-from dask.utils import SerializableLock
 lock = SerializableLock()
+
+
+with open('config.json', 'r') as fh:
+    config = json.load(fh)
+
+
+def glob(x):
+    from glob import glob
+    return sorted(glob(x))
+
 
 def main(client):
 
     # Define schemas
     green_schema_pre_2015="vendor_id,pickup_datetime,dropoff_datetime,store_and_fwd_flag,rate_code_id,pickup_longitude,pickup_latitude,dropoff_longitude,dropoff_latitude,passenger_count,trip_distance,fare_amount,extra,mta_tax,tip_amount,tolls_amount,ehail_fee,total_amount,payment_type,trip_type,junk1,junk2"
-    green_glob_pre_2015 = glob('../00_download_scripts/raw_data/taxi/green_tripdata_201[34]*.csv')
+    green_glob_pre_2015 = glob(os.path.join(config['taxi_raw_data_path'],'green_tripdata_201[34]*.csv'))
 
     green_schema_2015_h1="vendor_id,pickup_datetime,dropoff_datetime,store_and_fwd_flag,rate_code_id,pickup_longitude,pickup_latitude,dropoff_longitude,dropoff_latitude,passenger_count,trip_distance,fare_amount,extra,mta_tax,tip_amount,tolls_amount,ehail_fee,improvement_surcharge,total_amount,payment_type,trip_type,junk1,junk2"
-    green_glob_2015_h1 = glob('../00_download_scripts/raw_data/taxi/green_tripdata_2015-0[1-6].csv')
+    green_glob_2015_h1 = glob(os.path.join(config['taxi_raw_data_path'],'green_tripdata_2015-0[1-6].csv'))
 
     green_schema_2015_h2_2016_h1="vendor_id,pickup_datetime,dropoff_datetime,store_and_fwd_flag,rate_code_id,pickup_longitude,pickup_latitude,dropoff_longitude,dropoff_latitude,passenger_count,trip_distance,fare_amount,extra,mta_tax,tip_amount,tolls_amount,ehail_fee,improvement_surcharge,total_amount,payment_type,trip_type"
-    green_glob_2015_h2_2016_h1 = glob('../00_download_scripts/raw_data/taxi/green_tripdata_2015-0[7-9].csv') + glob('../00_download_scripts/raw_data/taxi/green_tripdata_2015-1[0-2].csv') + glob('../00_download_scripts/raw_data/taxi/green_tripdata_2016-0[1-6].csv')
+    green_glob_2015_h2_2016_h1 = glob(os.path.join(config['taxi_raw_data_path'],'green_tripdata_2015-0[7-9].csv')) + glob(os.path.join(config['taxi_raw_data_path'],'green_tripdata_2015-1[0-2].csv')) + glob(os.path.join(config['taxi_raw_data_path'],'green_tripdata_2016-0[1-6].csv'))
 
     green_schema_2016_h2="vendor_id,pickup_datetime,dropoff_datetime,store_and_fwd_flag,rate_code_id,pickup_location_id,dropoff_location_id,passenger_count,trip_distance,fare_amount,extra,mta_tax,tip_amount,tolls_amount,ehail_fee,improvement_surcharge,total_amount,payment_type,trip_type,junk1,junk2"
-    green_glob_2016_h2 = glob('../00_download_scripts/raw_data/taxi/green_tripdata_2016-0[7-9].csv') + glob('../00_download_scripts/raw_data/taxi/green_tripdata_2016-1[0-2].csv')
+    green_glob_2016_h2 = glob(os.path.join(config['taxi_raw_data_path'],'green_tripdata_2016-0[7-9].csv')) + glob(os.path.join(config['taxi_raw_data_path'],'green_tripdata_2016-1[0-2].csv'))
 
     yellow_schema_pre_2015="vendor_id,pickup_datetime,dropoff_datetime,passenger_count,trip_distance,pickup_longitude,pickup_latitude,rate_code_id,store_and_fwd_flag,dropoff_longitude,dropoff_latitude,payment_type,fare_amount,extra,mta_tax,tip_amount,tolls_amount,total_amount"
-    yellow_glob_pre_2015 = glob('../00_download_scripts/raw_data/taxi/yellow_tripdata_201[0-4]*.csv')
+    yellow_glob_pre_2015 = glob(os.path.join(config['taxi_raw_data_path'],'yellow_tripdata_201[0-4]*.csv'))
 
     yellow_schema_2015_2016_h1="vendor_id,pickup_datetime,dropoff_datetime,passenger_count,trip_distance,pickup_longitude,pickup_latitude,rate_code_id,store_and_fwd_flag,dropoff_longitude,dropoff_latitude,payment_type,fare_amount,extra,mta_tax,tip_amount,tolls_amount,improvement_surcharge,total_amount"
-    yellow_glob_2015_2016_h1 = glob('../00_download_scripts/raw_data/taxi/yellow_tripdata_2015*.csv') + glob('../00_download_scripts/raw_data/taxi/yellow_tripdata_2016-0[1-6].csv')
+    yellow_glob_2015_2016_h1 = glob(os.path.join(config['taxi_raw_data_path'],'yellow_tripdata_2015*.csv')) + glob(os.path.join(config['taxi_raw_data_path'],'yellow_tripdata_2016-0[1-6].csv'))
 
     yellow_schema_2016_h2="vendor_id,pickup_datetime,dropoff_datetime,passenger_count,trip_distance,rate_code_id,store_and_fwd_flag,pickup_location_id,dropoff_location_id,payment_type,fare_amount,extra,mta_tax,tip_amount,tolls_amount,improvement_surcharge,total_amount,junk1,junk2"
-    yellow_glob_2016_h2 = glob('../00_download_scripts/raw_data/taxi/yellow_tripdata_2016-0[7-9].csv') + glob('../raw_data/taxi/yellow_tripdata_2016-1[0-2].csv')
+    yellow_glob_2016_h2 = glob(os.path.join(config['taxi_raw_data_path'],'yellow_tripdata_2016-0[7-9].csv')) + glob(os.path.join(config['taxi_raw_data_path'],'yellow_tripdata_2016-1[0-2].csv'))
 
     ## Uncomment this block to get a printout of fields in the csv files
     # x=0
@@ -145,7 +157,11 @@ def main(client):
 
     ## To_hdf is well tested and works, but unfortunately is really slow to 
     ## load into postgresql through Pandas. 
-    green.to_hdf('/data4/green/green-*.hdf', '/data', complib='blosc', complevel=1, lock=lock)
+    # green.to_hdf(
+    #     os.path.join(config['hdf_output_path'],'green-*.hdf'), 
+    #     '/data', complib='blosc', 
+    #     complevel=1, lock=lock)
+
 
     ## To_parquet is currently (2017 Feb) alpha software, and seems to create
     ## bad files where some data is corrupted when reading the files back in.
@@ -153,8 +169,45 @@ def main(client):
     #     object_encoding='json')
 
     ## Sadly this is the only format that works flawlessly.
-    green.to_csv('/data4/green/green-*.csv')
+    # green.to_csv(os.path.join(config['csv_output_path'], 'green-*.csv'))
 
+    #GREEN09 (or 08) seem to be the issue
+
+    green_hdf_files = glob(
+        os.path.join(config['hdf_output_path'], 'green-*.hdf'))
+
+    for i, f in enumerate(green_hdf_files):
+        print( (i, f))
+        df = pd.read_hdf(f)
+        
+        if i==0:
+            fastparquet.write(
+                os.path.join(config['parquet_output_path'], "green.parquet"),
+                df,
+                compression="SNAPPY",
+                file_scheme="hive",
+                has_nulls=True,
+                object_encoding='utf8')
+            # df.to_hdf(
+            #     os.path.join(config['hdf_output_path'], "green-all.hdf"),
+            #     complevel=1, complib='blosc', format='t'
+            #     )
+
+        else:
+            fastparquet.write(
+                os.path.join(config['parquet_output_path'], "green.parquet"),
+                df, append=True,
+                compression="SNAPPY",
+                file_scheme="hive",
+                has_nulls=True,
+                write_index=True,
+                object_encoding='utf8')
+            # df.to_hdf(
+            #     os.path.join(config['hdf_output_path'], "green-all.hdf"),
+            #     complevel=1, complib='blosc', format='t', append=True
+            #     )
+
+    sys.exit(9)
 
     #----------------------------------------------------------------------
 
@@ -218,20 +271,60 @@ def main(client):
         yellow2[sorted(yellow1.columns)])
     yellow = yellow.append(yellow3[sorted(yellow1.columns)])
 
-    yellow = yellow.repartition(npartitions=560)
+    yellow = yellow.repartition(npartitions=500)
     # yellow = client.persist(yellow)
 
     ## To_hdf is well tested and works, but unfortunately is really slow to 
     ## load into postgresql through Pandas. 
-    yellow.to_hdf('/data4/yellow/yellow-*.hdf', '/data', complib='blosc', complevel=1, lock=lock)
+    yellow.to_hdf(
+        os.path.join(config['hdf_output_path'],'yellow-*.hdf'), 
+        '/data', complib='blosc', 
+        complevel=1, lock=lock)
+
 
     ## To_parquet is currently (2017 Feb) alpha software, and seems to create
     ## bad files where some data is corrupted when reading the files back in.
-    ## Let's hope it's fixed someday. 
-    # yellow.to_parquet('/data3/yellow.parq', compression="SNAPPY", has_nulls=True)
+    # yellow.to_parquet('/data3/yellow.parq', compression="SNAPPY", has_nulls=True,
+    #     object_encoding='json')
 
     ## Sadly this is the only format that works flawlessly.
-    yellow.to_csv('/data4/yellow/yellow-*.csv')
+    yellow.to_csv(os.path.join(config['csv_output_path'], 'yellow-*.csv'))
+
+    yellow_hdf_files = glob(
+        os.path.join(config['hdf_output_path'], 'yellow-*.hdf'))
+
+    for i, f in enumerate(yellow_hdf_files):
+        print( (i, f))
+        df = pd.read_hdf(f)
+        
+        if i==0:
+            fastparquet.write(
+                os.path.join(config['parquet_output_path'], "yellow.parq"),
+                df,
+                compression="SNAPPY",
+                file_scheme="hive",
+                has_nulls=True,
+                write_index=True,
+                object_encoding='utf8')
+            df.to_hdf(
+                os.path.join(config['hdf_output_path'], "yellow-all.hdf"),
+                complevel=1, complib='blosc'
+                )
+        else:
+            fastparquet.write(
+                os.path.join(config['parquet_output_path'], "yellow.parq"),
+                df, append=True,
+                compression="SNAPPY",
+                file_scheme="hive",
+                has_nulls=True,
+                write_index=True,
+                object_encoding='utf8')
+            df.to_hdf(
+                os.path.join(config['hdf_output_path'], "yellow-all.hdf"),
+                complevel=1, complib='blosc', append=True
+                )
+
+
 
 
 if __name__ == '__main__':
