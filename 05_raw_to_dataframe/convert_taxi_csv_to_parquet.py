@@ -165,9 +165,8 @@ def main(client):
         # This is an expensive shuffle, but it is required to get correct
         # parquet files.  Without it, rows can overwrite because they have the
         # same index. 
-        green = green.set_index("pickup_datetime", compute=False)
-        client.persist(green)
-        green = green.categorize()
+        # green = green.set_index("pickup_datetime", compute=False)
+        # green = client.persist(green.categorize())
         green = green.repartition(npartitions=25)
 
         ## To_hdf is well tested and works, but unfortunately is really slow to 
@@ -180,10 +179,10 @@ def main(client):
 
         ## To_parquet is currently (2017 Feb) alpha software, and seems to create
         ## bad files where some data is corrupted when reading the files back in.
-        trymakedirs(os.path.join(config['parquet_output_path'], 'green/'))
-        green.to_parquet('/data3/green.parquet', compression="SNAPPY", 
-            has_nulls=True,
-            object_encoding='json')
+        # trymakedirs(os.path.join(config['parquet_output_path'], 'green/'))
+        # green.to_parquet('/data3/green.parquet', compression="SNAPPY", 
+        #     has_nulls=True,
+        #     object_encoding='json')
 
         ## Sadly this is the only format that works flawlessly.
         trymakedirs(os.path.join(config['csv_output_path'], 'green/'))
@@ -191,7 +190,6 @@ def main(client):
             os.path.join(config['csv_output_path'], 'green/', 'green-*.csv'),
             float_format='%.8g', index=False)
 
-    client.restart()
 
     #----------------------------------------------------------------------
 
@@ -253,13 +251,11 @@ def main(client):
     yellow = yellow1[sorted(yellow1.columns)].append(
         yellow2[sorted(yellow1.columns)])
     yellow = yellow.append(yellow3[sorted(yellow1.columns)])
-    yellow = yellow.persist(yellow.categorize())
 
     if write_out:
         # This is an expensive shuffle, but it is required to get correct
         # parquet files.  Without it, rows can overwrite because they have the
         # same index. 
-        yellow = yellow.set_index("pickup_datetime", compute=False)
         yellow = yellow.repartition(500)
 
         ## To_hdf is well tested and works, but unfortunately is really slow to 
@@ -273,9 +269,9 @@ def main(client):
 
         ## To_parquet is currently (2017 Feb) alpha software, and seems to create
         ## bad files where some data is corrupted when reading the files back in.
-        trymakedirs(os.path.join(config['parquet_output_path'], 'yellow/'))
-        yellow.to_parquet('/data3/yellow.parq', compression="SNAPPY", has_nulls=True,
-            object_encoding='json')
+        # trymakedirs(os.path.join(config['parquet_output_path'], 'yellow/'))
+        # yellow.to_parquet('/data3/yellow.parq', compression="SNAPPY", has_nulls=True,
+        #     object_encoding='json')
 
         ## Sadly this is the only format that works flawlessly.
         trymakedirs(os.path.join(config['csv_output_path'], 'yellow/'))
