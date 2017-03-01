@@ -72,28 +72,28 @@ def main(client):
 
     dtype_list = { 
     #     'dropoff_datetime': object, # set by parse_dates in pandas read_csv
-        'dropoff_latitude': np.float32,
-        'dropoff_location_id': np.int32,
-        'dropoff_longitude': np.float32,
-        'ehail_fee': np.float32,
-        'extra': np.float32,
-        'fare_amount': np.float32,
-        'improvement_surcharge': np.float32,
+        'dropoff_latitude': np.float64,
+        'dropoff_location_id': np.int64,
+        'dropoff_longitude': np.float64,
+        'ehail_fee': np.float64,
+        'extra': np.float64,
+        'fare_amount': np.float64,
+        'improvement_surcharge': np.float64,
         'junk1': object,
         'junk2': object,
-        'mta_tax': np.float32,
-        'passenger_count': np.int32,
+        'mta_tax': np.float64,
+        'passenger_count': np.int64,
         'payment_type': object,
     #     'pickup_datetime': object, # set by parse_dates in pandas read_csv
-        'pickup_latitude': np.float32,
-        'pickup_location_id': np.int32,
-        'pickup_longitude': np.float32,
-        'rate_code_id': np.int32,
+        'pickup_latitude': np.float64,
+        'pickup_location_id': np.int64,
+        'pickup_longitude': np.float64,
+        'rate_code_id': np.int64,
         'store_and_fwd_flag': object,
-        'tip_amount': np.float32,
-        'tolls_amount': np.float32,
-        'total_amount': np.float32,
-        'trip_distance': np.float32,
+        'tip_amount': np.float64,
+        'tolls_amount': np.float64,
+        'total_amount': np.float64,
+        'trip_distance': np.float64,
         'trip_type': object,
         'vendor_id': object
     }
@@ -161,13 +161,22 @@ def main(client):
     green = green.append(green3[sorted(green1.columns)])
     green = green.append(green4[sorted(green1.columns)])
 
+    def sanitize_latlon(x):
+        return x if ((x>=-180.) and (x<=180.)) else np.nan
+
+    green = green.repartition(npartitions=25)
+    client.persist(green)
+    green = green.assign(
+        dropoff_latitude=sanitize_latlon(green.dropoff_latitude),
+        dropoff_longitude=sanitize_latlon(green.dropoff_longitude),
+        pickup_latitude=sanitize_latlon(green.pickup_latitude),
+        pickup_longitude=sanitize_latlon(green.pickup_longitude))
+
+    # green = green.drop(['payment_type', 'store_and_fwd_flag', 
+    #     'trip_type', 'vendor_id'], axis=1)
+
     if write_out:
-        # This is an expensive shuffle, but it is required to get correct
-        # parquet files.  Without it, rows can overwrite because they have the
-        # same index. 
-        # green = green.set_index("pickup_datetime", compute=False)
-        # green = client.persist(green.categorize())
-        green = green.repartition(npartitions=25)
+        # green = green.repartition(npartitions=25)
 
         ## To_hdf is well tested and works, but unfortunately is really slow to 
         ## load into postgresql through Pandas. 
@@ -179,10 +188,12 @@ def main(client):
 
         ## To_parquet is currently (2017 Feb) alpha software, and seems to create
         ## bad files where some data is corrupted when reading the files back in.
-        # trymakedirs(os.path.join(config['parquet_output_path'], 'green/'))
-        # green.to_parquet('/data3/green.parquet', compression="SNAPPY", 
-        #     has_nulls=True,
-        #     object_encoding='json')
+        trymakedirs(os.path.join(config['parquet_output_path'], 'green/'))
+        green.to_parquet(
+            os.path.join(config['parquet_output_path'], 'green/', 'green.parquet'),
+            compression="SNAPPY", 
+            has_nulls=True,
+            object_encoding='json')
 
         ## Sadly this is the only format that works flawlessly.
         trymakedirs(os.path.join(config['csv_output_path'], 'green/'))
@@ -190,6 +201,7 @@ def main(client):
             os.path.join(config['csv_output_path'], 'green/', 'green-*.csv'),
             float_format='%.8g', index=False)
 
+    client.restart()
 
     #----------------------------------------------------------------------
 
@@ -252,11 +264,20 @@ def main(client):
         yellow2[sorted(yellow1.columns)])
     yellow = yellow.append(yellow3[sorted(yellow1.columns)])
 
+    # yellow = yellow.drop(['payment_type', 'store_and_fwd_flag', 
+    #     'trip_type', 'vendor_id'], axis=1)
+
+    yellow = yellow.repartition(npartitions=500)
+    client.persist(yellow)
+
+    yellow.assign(
+        dropoff_latitude=sanitize_latlon(yellow.dropoff_latitude),
+        dropoff_longitude=sanitize_latlon(yellow.dropoff_longitude),
+        pickup_latitude=sanitize_latlon(yellow.pickup_latitude),
+        pickup_longitude=sanitize_latlon(yellow.pickup_longitude))
+
     if write_out:
-        # This is an expensive shuffle, but it is required to get correct
-        # parquet files.  Without it, rows can overwrite because they have the
-        # same index. 
-        yellow = yellow.repartition(500)
+        # yellow = yellow.repartition(npartitions=500)
 
         ## To_hdf is well tested and works, but unfortunately is really slow to 
         ## load into postgresql through Pandas. 
@@ -266,12 +287,13 @@ def main(client):
             '/data', complib='blosc', 
             complevel=1, lock=lock)
 
-
         ## To_parquet is currently (2017 Feb) alpha software, and seems to create
         ## bad files where some data is corrupted when reading the files back in.
-        # trymakedirs(os.path.join(config['parquet_output_path'], 'yellow/'))
-        # yellow.to_parquet('/data3/yellow.parq', compression="SNAPPY", has_nulls=True,
-        #     object_encoding='json')
+        trymakedirs(os.path.join(config['parquet_output_path'], 'yellow/'))
+        yellow.to_parquet(
+            os.path.join(config['parquet_output_path'], 'yellow/', 'yellow.parquet'),
+            compression="SNAPPY", has_nulls=True,
+            object_encoding='json')
 
         ## Sadly this is the only format that works flawlessly.
         trymakedirs(os.path.join(config['csv_output_path'], 'yellow/'))
