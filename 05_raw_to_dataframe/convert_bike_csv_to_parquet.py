@@ -17,20 +17,7 @@ end_station_id,end_station_name,end_station_latitude,
 end_station_longitude,bike_id,user_type,birth_year,gender""".split(',')
 schema = [x.strip() for x in schema]
 
-with open('config.json', 'r') as fh:
-    config = json.load(fh)
-
-
-def main(client):
-    df = dd.read_csv(
-        sorted(glob(os.path.join(config["citibike_raw_data_path"], '2*iti*.csv'))),
-        parse_dates=[1, 2, ],
-        infer_datetime_format=True,
-        # blocksize=500*(2**20),
-        na_values=["\\N"],
-        header=0,
-        names=schema,
-        dtype={
+dtype_list = {    
             'trip_duration':                     np.int32,
             'start_station_id':                  np.int32,
             'start_station_name':                object,
@@ -45,14 +32,29 @@ def main(client):
             'birth_year':                        np.float32,
             'gender':                            np.int32,
         }
-    )
-    df = df.set_index('start_time', npartitions=200, compute=False)
-    df = df.categorize()
-    df = df.repartition(npartitions=32)
 
-    # This is buggy -- The file cannot always be read back in. There must be
-    # a race condition somewhere. Instead we load df into memory and use
-    # fastparquet directly (instead of through dask layer) below.
+with open('config.json', 'r') as fh:
+    config = json.load(fh)
+
+
+def main(client):
+    df = dd.read_csv(
+        sorted(glob(os.path.join(config["citibike_raw_data_path"], '2*iti*.csv'))),
+        parse_dates=[1, 2, ],
+        infer_datetime_format=True,
+        # blocksize=500*(2**20),
+        na_values=["\\N"],
+        header=0,
+        names=schema,
+        dtype=dtype_list
+    )
+    #df = df.set_index('start_time', npartitions=200, compute=False)
+    df = df.repartition(npartitions=32)
+    for fieldName in schema:
+        if fieldName in dtype_list:
+            df[fieldName] = df[fieldName].astype(dtype_list[fieldName])
+    df = df.categorize()
+
     df.to_parquet(
         os.path.join(config['parquet_output_path'], 'citibike.parquet'), 
         compression="SNAPPY")

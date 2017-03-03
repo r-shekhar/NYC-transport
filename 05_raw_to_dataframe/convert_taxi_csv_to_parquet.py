@@ -15,16 +15,16 @@ import os, sys
 lock = SerializableLock()
 
 write_out = True
+write_hdf = False
+write_csv = False
 
 
 with open('config.json', 'r') as fh:
     config = json.load(fh)
 
-
 def glob(x):
     from glob import glob
     return sorted(glob(x))
-
 
 def trymakedirs(path):
     try:
@@ -161,30 +161,26 @@ def main(client):
     green = green.append(green3[sorted(green1.columns)])
     green = green.append(green4[sorted(green1.columns)])
 
-    def sanitize_latlon(x):
-        return x if ((x>=-180.) and (x<=180.)) else np.nan
 
-    green = green.repartition(npartitions=25)
-    client.persist(green)
-    green = green.assign(
-        dropoff_latitude=sanitize_latlon(green.dropoff_latitude),
-        dropoff_longitude=sanitize_latlon(green.dropoff_longitude),
-        pickup_latitude=sanitize_latlon(green.pickup_latitude),
-        pickup_longitude=sanitize_latlon(green.pickup_longitude))
 
-    # green = green.drop(['payment_type', 'store_and_fwd_flag', 
-    #     'trip_type', 'vendor_id'], axis=1)
+    for field in list(green.columns):
+        if field in dtype_list:
+            green[field] = green[field].astype(dtype_list[field])
+    # green = green.categorize()
+
 
     if write_out:
-        # green = green.repartition(npartitions=25)
+        # green = green.set_index('pickup_datetime', compute=False)
+        green = green.repartition(npartitions=25)
 
-        ## To_hdf is well tested and works, but unfortunately is really slow to 
-        ## load into postgresql through Pandas. 
-        trymakedirs(os.path.join(config['hdf_output_path'], 'green/'))
-        green.to_hdf(
-            os.path.join(config['hdf_output_path'], 'green/' , 'green-*.hdf'), 
-            '/data', complib='blosc', 
-            complevel=1, lock=lock)
+        if write_hdf:
+            ## To_hdf is well tested and works, but unfortunately is really slow to 
+            ## load into postgresql through Pandas. 
+            trymakedirs(os.path.join(config['hdf_output_path'], 'green/'))
+            green.to_hdf(
+                os.path.join(config['hdf_output_path'], 'green/' , 'green-*.hdf'), 
+                '/data', complib='blosc', 
+                complevel=1, lock=lock)
 
         ## To_parquet is currently (2017 Feb) alpha software, and seems to create
         ## bad files where some data is corrupted when reading the files back in.
@@ -195,13 +191,14 @@ def main(client):
             has_nulls=True,
             object_encoding='json')
 
-        ## Sadly this is the only format that works flawlessly.
-        trymakedirs(os.path.join(config['csv_output_path'], 'green/'))
-        green.to_csv(
-            os.path.join(config['csv_output_path'], 'green/', 'green-*.csv'),
-            float_format='%.8g', index=False)
+        if write_csv:
+            ## Sadly this is the only format that works flawlessly.
+            trymakedirs(os.path.join(config['csv_output_path'], 'green/'))
+            green.to_csv(
+                os.path.join(config['csv_output_path'], 'green/', 'green-*.csv'),
+                float_format='%.8g', index=False)
 
-    client.restart()
+    # client.restart()
 
     #----------------------------------------------------------------------
 
@@ -266,26 +263,24 @@ def main(client):
 
     # yellow = yellow.drop(['payment_type', 'store_and_fwd_flag', 
     #     'trip_type', 'vendor_id'], axis=1)
+    for field in list(yellow.columns):
+        if field in dtype_list:
+            yellow[field] = yellow[field].astype(dtype_list[field])
 
-    yellow = yellow.repartition(npartitions=500)
-    client.persist(yellow)
-
-    yellow.assign(
-        dropoff_latitude=sanitize_latlon(yellow.dropoff_latitude),
-        dropoff_longitude=sanitize_latlon(yellow.dropoff_longitude),
-        pickup_latitude=sanitize_latlon(yellow.pickup_latitude),
-        pickup_longitude=sanitize_latlon(yellow.pickup_longitude))
-
+    # yellow = yellow.categorize()
     if write_out:
-        # yellow = yellow.repartition(npartitions=500)
 
-        ## To_hdf is well tested and works, but unfortunately is really slow to 
-        ## load into postgresql through Pandas. 
-        trymakedirs(os.path.join(config['hdf_output_path'], 'yellow/'))
-        yellow.to_hdf(
-            os.path.join(config['hdf_output_path'], 'yellow/', 'yellow-*.hdf'), 
-            '/data', complib='blosc', 
-            complevel=1, lock=lock)
+        # yellow = yellow.set_index('pickup_datetime', compute=False)
+        yellow = yellow.repartition(npartitions=500)
+        
+        if write_hdf:
+            ## To_hdf is well tested and works, but unfortunately is really slow to 
+            ## load into postgresql through Pandas. 
+            trymakedirs(os.path.join(config['hdf_output_path'], 'yellow/'))
+            yellow.to_hdf(
+                os.path.join(config['hdf_output_path'], 'yellow/', 'yellow-*.hdf'), 
+                '/data', complib='blosc', 
+                complevel=1, lock=lock)
 
         ## To_parquet is currently (2017 Feb) alpha software, and seems to create
         ## bad files where some data is corrupted when reading the files back in.
@@ -295,12 +290,13 @@ def main(client):
             compression="SNAPPY", has_nulls=True,
             object_encoding='json')
 
-        ## Sadly this is the only format that works flawlessly.
-        trymakedirs(os.path.join(config['csv_output_path'], 'yellow/'))
-        yellow.to_csv(
-            os.path.join(config['csv_output_path'], 'yellow/', 'yellow-*.csv'),
-            float_format='%.8g', index=False
-            )
+        if write_csv:
+            ## Sadly this is the only format that works flawlessly.
+            trymakedirs(os.path.join(config['csv_output_path'], 'yellow/'))
+            yellow.to_csv(
+                os.path.join(config['csv_output_path'], 'yellow/', 'yellow-*.csv'),
+                float_format='%.8g', index=False
+                )
 
 
 
