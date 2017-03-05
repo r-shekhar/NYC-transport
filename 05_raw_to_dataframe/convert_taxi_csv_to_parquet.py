@@ -12,12 +12,6 @@ import numpy as np
 import pandas as pd
 import os, sys
 
-lock = SerializableLock()
-
-write_out = True
-write_hdf = False
-write_csv = False
-
 
 with open('config.json', 'r') as fh:
     config = json.load(fh)
@@ -162,43 +156,19 @@ def main(client):
     green = green.append(green4[sorted(green1.columns)])
 
 
-
     for field in list(green.columns):
         if field in dtype_list:
             green[field] = green[field].astype(dtype_list[field])
-    # green = green.categorize()
 
+    green = green.repartition(npartitions=100)
 
-    if write_out:
-        # green = green.set_index('pickup_datetime', compute=False)
-        green = green.repartition(npartitions=25)
+    trymakedirs(os.path.join(config['parquet_output_path']))
+    green.to_parquet(
+        os.path.join(config['parquet_output_path'], 'green.parquet'),
+        compression="SNAPPY", 
+        has_nulls=True,
+        object_encoding='json')
 
-        if write_hdf:
-            ## To_hdf is well tested and works, but unfortunately is really slow to 
-            ## load into postgresql through Pandas. 
-            trymakedirs(os.path.join(config['hdf_output_path'], 'green/'))
-            green.to_hdf(
-                os.path.join(config['hdf_output_path'], 'green/' , 'green-*.hdf'), 
-                '/data', complib='blosc', 
-                complevel=1, lock=lock)
-
-        ## To_parquet is currently (2017 Feb) alpha software, and seems to create
-        ## bad files where some data is corrupted when reading the files back in.
-        trymakedirs(os.path.join(config['parquet_output_path'], 'green/'))
-        green.to_parquet(
-            os.path.join(config['parquet_output_path'], 'green/', 'green.parquet'),
-            compression="SNAPPY", 
-            has_nulls=True,
-            object_encoding='json')
-
-        if write_csv:
-            ## Sadly this is the only format that works flawlessly.
-            trymakedirs(os.path.join(config['csv_output_path'], 'green/'))
-            green.to_csv(
-                os.path.join(config['csv_output_path'], 'green/', 'green-*.csv'),
-                float_format='%.8g', index=False)
-
-    # client.restart()
 
     #----------------------------------------------------------------------
 
@@ -261,42 +231,20 @@ def main(client):
         yellow2[sorted(yellow1.columns)])
     yellow = yellow.append(yellow3[sorted(yellow1.columns)])
 
-    # yellow = yellow.drop(['payment_type', 'store_and_fwd_flag', 
-    #     'trip_type', 'vendor_id'], axis=1)
+
     for field in list(yellow.columns):
         if field in dtype_list:
             yellow[field] = yellow[field].astype(dtype_list[field])
+    
+    yellow = yellow.repartition(npartitions=500)
 
-    # yellow = yellow.categorize()
-    if write_out:
 
-        # yellow = yellow.set_index('pickup_datetime', compute=False)
-        yellow = yellow.repartition(npartitions=500)
-        
-        if write_hdf:
-            ## To_hdf is well tested and works, but unfortunately is really slow to 
-            ## load into postgresql through Pandas. 
-            trymakedirs(os.path.join(config['hdf_output_path'], 'yellow/'))
-            yellow.to_hdf(
-                os.path.join(config['hdf_output_path'], 'yellow/', 'yellow-*.hdf'), 
-                '/data', complib='blosc', 
-                complevel=1, lock=lock)
+    yellow.to_parquet(
+        os.path.join(config['parquet_output_path'], 'yellow.parquet'),
+        compression="SNAPPY", has_nulls=True,
+        object_encoding='json')
 
-        ## To_parquet is currently (2017 Feb) alpha software, and seems to create
-        ## bad files where some data is corrupted when reading the files back in.
-        trymakedirs(os.path.join(config['parquet_output_path'], 'yellow/'))
-        yellow.to_parquet(
-            os.path.join(config['parquet_output_path'], 'yellow/', 'yellow.parquet'),
-            compression="SNAPPY", has_nulls=True,
-            object_encoding='json')
 
-        if write_csv:
-            ## Sadly this is the only format that works flawlessly.
-            trymakedirs(os.path.join(config['csv_output_path'], 'yellow/'))
-            yellow.to_csv(
-                os.path.join(config['csv_output_path'], 'yellow/', 'yellow-*.csv'),
-                float_format='%.8g', index=False
-                )
 
 
 

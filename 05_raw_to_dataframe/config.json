@@ -2,7 +2,5 @@
     "citibike_raw_data_path" : "../00_download_scripts/raw_data/bike/",
     "taxi_raw_data_path" : "../00_download_scripts/raw_data/taxi/",
     
-    "hdf_output_path" : "/data1/hdf/",
-    "csv_output_path" : "/data3/csv/",
     "parquet_output_path" : "/data4/parquet/"
 }
