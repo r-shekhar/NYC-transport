@@ -43,11 +43,11 @@ def download_subway_data():
     for datestr, url_file in turnstile_links:
         date = datetime.strptime(datestr, "%A, %B %d, %Y")
         new_filename = './raw_data/subway/{0}'.format(os.path.split(url_file)[-1])
-        if not os.path.isfile(new_filename):
+        if os.path.isfile(new_filename) or os.path.isfile(new_filename + '.gz'):
+            print("File for {0} exists. Skipping.".format(date))
+        else:
             print("Downloading {0}".format(date))
             urllib.request.urlretrieve(url_file, new_filename)
-        else:
-            print("File for {0} exists. Skipping.".format(date))
 
     print('Downloading complete.')
 
