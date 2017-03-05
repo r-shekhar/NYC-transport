@@ -50,15 +50,16 @@ def main(client):
     )
 
 
-    for fieldName in csv_schema:
-        if fieldName in dtype_list:
-            df[fieldName] = df[fieldName].astype(dtype_list[fieldName])
+    # for fieldName in csv_schema:
+    #     if fieldName in dtype_list:
+    #         df[fieldName] = df[fieldName].astype(dtype_list[fieldName])
+
     df = df.repartition(npartitions=50)            
-    df = df.categorize()
+
 
     df.to_parquet(
         os.path.join(config['parquet_output_path'], 'citibike.parquet'),
-        compression="SNAPPY")
+        compression="SNAPPY", object_encoding='json')
 
 
 if __name__ == '__main__':
