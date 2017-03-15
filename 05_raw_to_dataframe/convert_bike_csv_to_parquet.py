@@ -54,7 +54,7 @@ def main(client):
         if fieldName in dtype_list:
             df[fieldName] = df[fieldName].astype(dtype_list[fieldName])
         else:
-            df[fieldName] = (df[fieldName].astype('int64')/ 1e6).astype('int64')
+            df[fieldName] = (df[fieldName].astype('int64')/ 1e9).astype('int64')
 
     df = df.repartition(npartitions=50)            
 

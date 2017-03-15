@@ -1,7 +1,8 @@
 {
     "citibike_raw_data_path" : "../00_download_scripts/raw_data/bike/",
     "taxi_raw_data_path" : "../00_download_scripts/raw_data/taxi/",
-    "uber_raw_data_path" : "../00_download_scripts/raw_data/uber/",    
+    "uber_raw_data_path" : "../00_download_scripts/raw_data/uber/",
+    "subway_raw_data_path" : "../00_download_scripts/raw_data/subway/",
     
     "parquet_output_path" : "/data4/parquet/"
 }
