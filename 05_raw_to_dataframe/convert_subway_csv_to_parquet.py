@@ -66,6 +66,8 @@ def parse_line(l):
             for i in range(len(datatypes)):
                 if datatypes[i] == np.int64:
                     values[i] = int(values[i])
+                elif datatypes[i] == object:
+                    values[i] = str(values[i]).strip('"')
             # assert(len(values) == 10)
             # values.insert(0, None)  # for the primary key
             RV = (tuple(values), )
@@ -85,6 +87,8 @@ def parse_line(l):
                 for i in range(len(datatypes)):
                     if datatypes[i] == np.int64:
                         values[i] = int(values[i])
+                    elif datatypes[i] == object:
+                        values[i] = str(values[i]).strip('"')
                 outdata.append(tuple(values))
             RV = tuple(outdata)
         else:
