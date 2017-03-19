@@ -159,8 +159,6 @@ def main(client):
     for field in list(green.columns):
         if field in dtype_list:
             green[field] = green[field].astype(dtype_list[field])
-        else:
-            green[field] = (green[field].astype('int64')/ 1e9).astype('int64')
 
     green = green.repartition(npartitions=100)
 
@@ -237,9 +235,7 @@ def main(client):
     for field in list(yellow.columns):
         if field in dtype_list:
             yellow[field] = yellow[field].astype(dtype_list[field])
-        else:
-            yellow[field] = (yellow[field].astype('int64')/1e9).astype('int64')
-    
+
     yellow = yellow.repartition(npartitions=500)
 
 

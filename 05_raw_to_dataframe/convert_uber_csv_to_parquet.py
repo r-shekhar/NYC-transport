@@ -108,7 +108,7 @@ def main(client):
         if (field in uberdf.columns):
             uberdf[field] = uberdf[field].astype(dtype_list[field])
         elif field == 'pickup_datetime':
-            uberdf[field] = (uberdf[field].astype('int64')/ 1e9).astype('int64')
+            pass
         else:
             uberdf = uberdf.assign(**{field: default_values[dtype_list[field]]})
 
@@ -121,9 +121,6 @@ def main(client):
         compression="SNAPPY", 
         has_nulls=True,
         object_encoding='json')
-
-
-
 
 
 if __name__ == '__main__':

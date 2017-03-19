@@ -113,22 +113,21 @@ def parse_single_file(filename):
         print( '{} : {}'.format(filename, len(d)))
         return d
 
-def main(files):
+def main(files, client):
+
 
     bag = db.from_delayed([delayed(parse_single_file)(fn) for fn in files])
     df = bag.to_dataframe(columns=columns)
 
     df['endtime'] = df['endtime'].astype(np.datetime64)
-    df['endtime'] = (df.endtime.astype(np.int64) // 1e9).astype(np.int64)
 
     df.cumul_entries.astype(np.int64)
     df.cumul_exits.astype(np.int64)
+    df = df.set_index('unit', compute=False)
+    client.persist(df)
 
-    # df = df.categorize()
-    # fastparquet.write(os.path.join(config['parquet_output_path'], 'subway.parquet'), df,
-    #                   compression='SNAPPY', object_encoding='json')
-
-    # df = df.repartition(npartitions=50)
+    df = df.repartition(npartitions=20)
+    df = df.categorize()
     df.to_parquet(os.path.join(config['parquet_output_path'], 'subway.parquet'),
                   compression="SNAPPY", object_encoding='json'
                   )
@@ -139,7 +138,5 @@ if __name__ == '__main__':
     files = sorted(
             glob(os.path.join(config["subway_raw_data_path"],
                               'turnstile*.txt')))
-
-    # parse_single_file('../00_download_scripts/raw_data/subway/turnstile_150328.txt')
-    main(files)
+    main(files, client)
 

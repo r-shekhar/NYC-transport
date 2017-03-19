@@ -53,12 +53,9 @@ def main(client):
     for fieldName in csv_schema:
         if fieldName in dtype_list:
             df[fieldName] = df[fieldName].astype(dtype_list[fieldName])
-        else:
-            df[fieldName] = (df[fieldName].astype('int64')/ 1e9).astype('int64')
 
     df = df.repartition(npartitions=50)            
-
-
+    df = df.set_index('start_station_id', compute=False)
     df.to_parquet(
         os.path.join(config['parquet_output_path'], 'citibike.parquet'),
         compression="SNAPPY", object_encoding='json')
