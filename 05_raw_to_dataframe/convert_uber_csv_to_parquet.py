@@ -113,7 +113,9 @@ def main(client):
             uberdf = uberdf.assign(**{field: default_values[dtype_list[field]]})
 
     uberdf = uberdf.drop(['junk1', 'junk2'], axis=1)
-    uberdf = uberdf.repartition(npartitions=10)
+    #uberdf = uberdf.repartition(npartitions=20)
+
+    uberdf = uberdf[sorted(uberdf.columns)]
 
     trymakedirs(os.path.join(config['parquet_output_path']))
     uberdf.to_parquet(

@@ -160,7 +160,7 @@ def main(client):
         if field in dtype_list:
             green[field] = green[field].astype(dtype_list[field])
 
-    green = green.repartition(npartitions=100)
+    #green = green.repartition(npartitions=200)
 
     trymakedirs(os.path.join(config['parquet_output_path']))
     green.to_parquet(
@@ -236,7 +236,7 @@ def main(client):
         if field in dtype_list:
             yellow[field] = yellow[field].astype(dtype_list[field])
 
-    yellow = yellow.repartition(npartitions=500)
+    yellow = yellow.repartition(npartitions=2000)
 
 
     yellow.to_parquet(
