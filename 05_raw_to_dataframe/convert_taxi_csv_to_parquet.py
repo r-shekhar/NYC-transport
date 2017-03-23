@@ -37,12 +37,11 @@ def spatial_join(df, lon_var, lat_var, locid_var):
 
     shape_df = geopandas.read_file('../shapefiles/taxi_zones_latlon.shp')
     shape_df.drop(['OBJECTID', "Shape_Area", "Shape_Leng", "borough", "zone"],
-               axis=1, inplace=True)
+                  axis=1, inplace=True)
 
+    retval = df[locid_var]
 
-
-    if np.any( (lats!=0.) | (lons!=0.) ):
-        print(df.columns)
+    if np.any((lats != 0.) | (lons != 0.)):
         points = [Point(xy) for xy in zip(lons, lats)]
         points_df = geopandas.GeoDataFrame(
             crs={'init': 'epsg:4326'}, geometry=points)
@@ -50,72 +49,21 @@ def spatial_join(df, lon_var, lat_var, locid_var):
             joined = geopandas.sjoin(points_df, shape_df, op='intersects')
             joined = joined.drop(['geometry', 'index_right'], axis=1)
 
-            df = df.merge(joined, how='left', left_index=True, right_index=True)
-            df[locid_var] = (df['LocationID'].fillna(-999.)).astype(np.int64)
-            df = df.drop(['LocationID', 'geometry'], axis=1)
+            # this seems like it could be done better
+            dflocal = df[[locid_var, ]]
 
-            print(df.columns)
+            dflocal = dflocal.merge(joined, how='left', left_index=True,
+                                    right_index=True)
+            retval = (dflocal['LocationID'].fillna(-999.)).astype(np.int64)
+            retval = retval.rename(locid_var)
 
-            return df
+            return retval
         except ValueError as ve:
             # this error occurs when there are no rows in joined due to
             # no points having coordinates. Skip.
-            return df
+            return retval
     else:
-        return df
-
-# def spatial_join(df):
-
-#     dropoff_lons = np.nan_to_num(df.dropoff_longitude.values)
-#     dropoff_lats = np.nan_to_num(df.dropoff_latitude.values)
-
-#     pickup_lons = np.nan_to_num(df.pickup_longitude.values)
-#     pickup_lats = np.nan_to_num(df.pickup_latitude.values)
-
-#     # this structure (rtree) cannot be serialized correctly. It's not too 
-#     # expensive so just load it per task.
-#     shape_df = geopandas.read_file('../shapefiles/taxi_zones_latlon.shp')
-#     shape_df.drop(['OBJECTID', "Shape_Area", "Shape_Leng", "borough", "zone"],
-#                axis=1, inplace=True)
-
-#     if np.any( (dropoff_lats!=0.) | (dropoff_lons!=0.) ):
-#         dropoffs = [Point(xy) for xy in zip(dropoff_lons, dropoff_lats)]
-#         dropoff_frame = geopandas.GeoDataFrame(
-#             crs={'init': 'epsg:4326'}, geometry=dropoffs)
-#         print(dropoff_frame)
-        
-#         try:
-#             joined1 = geopandas.sjoin(dropoff_frame, shape_df, op='intersects')
-#             joined1 = joined1.drop(['geometry', 'index_right'], axis=1)
-#         except ValueError as ve:
-#             # this error occurs when there are no rows in joined1 due to
-#             # no points having coordinates. Skip.
-#             continue        
-
-#         print(joined1)
-
-#         df = df.merge(joined1, how='left', left_index=True, right_index=True)
-#         print(df)
-
-#     if np.any( (pickup_lats!=0.) | (pickup_lons!=0.) ):
-#         pickups = [Point(xy) for xy in zip(pickup_lons, pickup_lats)]
-#         pickup_frame = geopandas.GeoDataFrame(
-#             crs={'init': 'epsg:4326'}, geometry=pickups)
-#         print(pickup_frame)
-
-#         try:
-#             joined2 = geopandas.sjoin(pickup_frame, shape_df, op='intersects')
-#             joined2 = joined2.drop(['geometry', 'index_right'], axis=1)
-#         except ValueError as ve:
-#             pass 
-#         print(joined2)
-
-#         df = df.merge(joined2, how='left', left_index=True, right_index=True)
-#         df.
-
-#         print(df)
-
-#     return (df.dropoff_longitude + df.dropoff_latitude)
+        return retval
 
 
 def main(client):
@@ -251,11 +199,12 @@ def main(client):
         if field in dtype_list:
             green[field] = green[field].astype(dtype_list[field])
 
-    green = green.map_partitions(spatial_join, "dropoff_longitude", 
-        "dropoff_latitude", "dropoff_location_id", meta=green)
-    green = green.map_partitions(spatial_join, "pickup_longitude", 
-        "pickup_latitude", "pickup_location_id", meta=green)    
-
+    # green['dropoff_location_id'] = green.map_partitions(
+    #     spatial_join, "dropoff_longitude", "dropoff_latitude",
+    #     "dropoff_location_id", meta=('dropoff_location_id', np.int64))
+    # green['pickup_location_id'] = green.map_partitions(
+    #     spatial_join, "pickup_longitude", "pickup_latitude",
+    #     "pickup_location_id", meta=('pickup_location_id', np.int64))
 
     trymakedirs(os.path.join(config['parquet_output_path']))
     green.to_parquet(
@@ -264,7 +213,6 @@ def main(client):
         has_nulls=True,
         object_encoding='json')
 
-    sys.exit(9)
 
     #----------------------------------------------------------------------
 
@@ -329,7 +277,12 @@ def main(client):
         if field in dtype_list:
             yellow[field] = yellow[field].astype(dtype_list[field])
 
-    yellow = yellow.repartition(npartitions=2000)
+    # yellow['dropoff_location_id'] = yellow.map_partitions(
+    #     spatial_join, "dropoff_longitude", "dropoff_latitude",
+    #     "dropoff_location_id", meta=('dropoff_location_id', np.int64))
+    # yellow['pickup_location_id'] = yellow.map_partitions(
+    #     spatial_join, "pickup_longitude", "pickup_latitude",
+    #     "pickup_location_id", meta=('pickup_location_id', np.int64))
 
     yellow.to_parquet(
         os.path.join(config['parquet_output_path'], 'yellow.parquet'),
@@ -338,8 +291,6 @@ def main(client):
 
 
 if __name__ == '__main__':
-    # client = Client()
-    client=None
-    dask.set_options(get=dask.async.get_sync)
+    client = Client()
 
     main(client)
