@@ -13,6 +13,7 @@ import geopandas
 from shapely.geometry import Point
 import os
 import sys
+import joblib
 
 
 with open('config.json', 'r') as fh:
@@ -31,39 +32,71 @@ def trymakedirs(path):
         pass
 
 
-def spatial_join(df, lon_var, lat_var, locid_var):
-    lons = np.nan_to_num(df[lon_var].values)
-    lats = np.nan_to_num(df[lat_var].values)
+def assign_taxi_zones(df, lon_var, lat_var, locid_var):
+    """Joins DataFrame with Taxi Zones shapefile.
 
-    shape_df = geopandas.read_file('../shapefiles/taxi_zones_latlon.shp')
-    shape_df.drop(['OBJECTID', "Shape_Area", "Shape_Leng", "borough", "zone"],
-                  axis=1, inplace=True)
+    This function takes longitude values provided by `lon_var`, and latitude
+    values provided by `lat_var` in DataFrame `df`, and performs a spatial join
+    with the NYC taxi_zones shapefile. 
 
-    retval = df[locid_var]
+    The shapefile is hard coded in, as this function makes a hard assumption of
+    latitude and longitude coordinates. It also assumes latitude=0 and 
+    longitude=0 is not a datapoint that can exist in your dataset. Which is 
+    reasonable for a dataset of New York, but bad for a global dataset.
 
-    if np.any((lats != 0.) | (lons != 0.)):
-        points = [Point(xy) for xy in zip(lons, lats)]
-        points_df = geopandas.GeoDataFrame(
-            crs={'init': 'epsg:4326'}, geometry=points)
+    Only rows where `df.lon_var`, `df.lat_var` are reasonably near New York,
+    and `df.locid_var` is set to np.nan are updated. 
+
+    Parameters
+    ----------
+    df : pandas.DataFrame or dask.DataFrame
+        DataFrame containing latitudes, longitudes, and location_id columns.
+    lon_var : string
+        Name of column in `df` containing longitude values. Invalid values 
+        should be np.nan.
+    lat_var : string
+        Name of column in `df` containing latitude values. Invalid values 
+        should be np.nan
+    locid_var : string
+        Name of column in `df` containing taxi_zone location ids. Rows with
+        valid, nonzero values are not overwritten. 
+    """
+
+
+    localdf = df[[lon_var, lat_var, locid_var]].copy()
+    localdf = localdf.reset_index()
+    localdf[lon_var] = localdf[lon_var].fillna(value=0.)
+    localdf[lat_var] = localdf[lat_var].fillna(value=0.)
+    localdf['replace_locid'] = (localdf[locid_var].isnull()
+                                & (localdf[lon_var] != 0.)
+                                & (localdf[lat_var] != 0.))
+
+    if (np.any(localdf['replace_locid'])):
+        shape_df = geopandas.read_file('../shapefiles/taxi_zones_latlon.shp')
+        shape_df.drop(['OBJECTID', "Shape_Area", "Shape_Leng", "borough", "zone"],
+                      axis=1, inplace=True)
+
         try:
-            joined = geopandas.sjoin(points_df, shape_df, op='intersects')
-            joined = joined.drop(['geometry', 'index_right'], axis=1)
+            local_gdf = geopandas.GeoDataFrame(
+                localdf, crs={'init': 'epsg:4326'},
+                geometry=[Point(xy) for xy in
+                          zip(localdf[lon_var], localdf[lat_var])])
+            local_gdf = geopandas.sjoin(
+                local_gdf, shape_df, how='left', op='intersects')
 
-            # this seems like it could be done better
-            dflocal = df[[locid_var, ]]
-
-            dflocal = dflocal.merge(joined, how='left', left_index=True,
-                                    right_index=True)
-            retval = (dflocal['LocationID'].fillna(-999.)).astype(np.int64)
-            retval = retval.rename(locid_var)
-
-            return retval
+            local_gdf.LocationID.values[~local_gdf.replace_locid] = (
+                (local_gdf[locid_var])[~local_gdf.replace_locid]).values
+            return local_gdf.LocationID.rename(locid_var)
         except ValueError as ve:
-            # this error occurs when there are no rows in joined due to
-            # no points having coordinates. Skip.
-            return retval
+            print(ve)
+            return df[locid_var]
+
     else:
-        return retval
+        return df[locid_var]
+
+
+def sort_by_pickup_time(df):
+    return df.sort_values(by="pickup_datetime", inplace=True)
 
 
 def main(client):
@@ -111,7 +144,7 @@ def main(client):
     dtype_list = {
         #     'dropoff_datetime': object, # set by parse_dates in pandas read_csv
         'dropoff_latitude': np.float64,
-        'dropoff_location_id': np.int64,
+        'dropoff_location_id': np.float64,
         'dropoff_longitude': np.float64,
         'ehail_fee': np.float64,
         'extra': np.float64,
@@ -124,7 +157,7 @@ def main(client):
         'payment_type': object,
         #     'pickup_datetime': object, # set by parse_dates in pandas read_csv
         'pickup_latitude': np.float64,
-        'pickup_location_id': np.int64,
+        'pickup_location_id': np.float64,
         'pickup_longitude': np.float64,
         'rate_code_id': np.int64,
         'store_and_fwd_flag': object,
@@ -143,10 +176,10 @@ def main(client):
                          infer_datetime_format=True,
                          dtype=dtype_list,
                          names=green_schema_pre_2015.split(','))
-    green1['dropoff_location_id'] = green1['rate_code_id'].copy()
-    green1['dropoff_location_id'] = -999
-    green1['pickup_location_id'] = green1['rate_code_id'].copy()
-    green1['pickup_location_id'] = -999
+    green1['dropoff_location_id'] = green1['total_amount'].copy()
+    green1['dropoff_location_id'] = np.nan
+    green1['pickup_location_id'] = green1['total_amount'].copy()
+    green1['pickup_location_id'] = np.nan
     green1['improvement_surcharge'] = green1['total_amount'].copy()
     green1['improvement_surcharge'] = np.nan
     green1 = green1.drop(['junk1', 'junk2'], axis=1)
@@ -157,10 +190,10 @@ def main(client):
                          infer_datetime_format=True,
                          dtype=dtype_list,
                          names=green_schema_2015_h1.split(','))
-    green2['dropoff_location_id'] = green2['rate_code_id'].copy()
-    green2['dropoff_location_id'] = -999
-    green2['pickup_location_id'] = green2['rate_code_id'].copy()
-    green2['pickup_location_id'] = -999
+    green2['dropoff_location_id'] = green2['total_amount'].copy()
+    green2['dropoff_location_id'] = np.nan
+    green2['pickup_location_id'] = green2['total_amount'].copy()
+    green2['pickup_location_id'] = np.nan
     green2 = green2.drop(['junk1', 'junk2'], axis=1)
 
     green3 = dd.read_csv(green_glob_2015_h2_2016_h1, header=0,
@@ -169,10 +202,10 @@ def main(client):
                          infer_datetime_format=True,
                          dtype=dtype_list,
                          names=green_schema_2015_h2_2016_h1.split(','))
-    green3['dropoff_location_id'] = green3['rate_code_id'].copy()
-    green3['dropoff_location_id'] = -999
-    green3['pickup_location_id'] = green3['rate_code_id'].copy()
-    green3['pickup_location_id'] = -999
+    green3['dropoff_location_id'] = green3['total_amount'].copy()
+    green3['dropoff_location_id'] = np.nan
+    green3['pickup_location_id'] = green3['total_amount'].copy()
+    green3['pickup_location_id'] = np.nan
 
     green4 = dd.read_csv(green_glob_2016_h2, header=0,
                          na_values=["NA"],
@@ -200,11 +233,11 @@ def main(client):
             green[field] = green[field].astype(dtype_list[field])
 
     # green['dropoff_location_id'] = green.map_partitions(
-    #     spatial_join, "dropoff_longitude", "dropoff_latitude",
-    #     "dropoff_location_id", meta=('dropoff_location_id', np.int64))
+    #     assign_taxi_zones, "dropoff_longitude", "dropoff_latitude",
+    #     "dropoff_location_id", meta=('dropoff_location_id', np.float64))
     # green['pickup_location_id'] = green.map_partitions(
-    #     spatial_join, "pickup_longitude", "pickup_latitude",
-    #     "pickup_location_id", meta=('pickup_location_id', np.int64))
+    #     assign_taxi_zones, "pickup_longitude", "pickup_latitude",
+    #     "pickup_location_id", meta=('pickup_location_id', np.float64))
 
     trymakedirs(os.path.join(config['parquet_output_path']))
     green.to_parquet(
@@ -223,10 +256,10 @@ def main(client):
                           infer_datetime_format=True,
                           dtype=dtype_list,
                           names=yellow_schema_pre_2015.split(','))
-    yellow1['dropoff_location_id'] = yellow1['rate_code_id'].copy()
-    yellow1['dropoff_location_id'] = -999
-    yellow1['pickup_location_id'] = yellow1['rate_code_id'].copy()
-    yellow1['pickup_location_id'] = -999
+    yellow1['dropoff_location_id'] = yellow1['total_amount'].copy()
+    yellow1['dropoff_location_id'] = np.nan
+    yellow1['pickup_location_id'] = yellow1['total_amount'].copy()
+    yellow1['pickup_location_id'] = np.nan
     yellow1['ehail_fee'] = yellow1['total_amount'].copy()
     yellow1['ehail_fee'] = np.nan
     yellow1['improvement_surcharge'] = yellow1['total_amount'].copy()
@@ -241,9 +274,9 @@ def main(client):
                           dtype=dtype_list,
                           names=yellow_schema_2015_2016_h1.split(','))
     yellow2['dropoff_location_id'] = yellow2['rate_code_id'].copy()
-    yellow2['dropoff_location_id'] = -999
+    yellow2['dropoff_location_id'] = np.nan
     yellow2['pickup_location_id'] = yellow2['rate_code_id'].copy()
-    yellow2['pickup_location_id'] = -999
+    yellow2['pickup_location_id'] = np.nan
     yellow2['ehail_fee'] = yellow2['total_amount'].copy()
     yellow2['ehail_fee'] = np.nan
     yellow2['trip_type'] = yellow2['rate_code_id'].copy()
@@ -278,10 +311,10 @@ def main(client):
             yellow[field] = yellow[field].astype(dtype_list[field])
 
     # yellow['dropoff_location_id'] = yellow.map_partitions(
-    #     spatial_join, "dropoff_longitude", "dropoff_latitude",
+    #     assign_taxi_zones, "dropoff_longitude", "dropoff_latitude",
     #     "dropoff_location_id", meta=('dropoff_location_id', np.int64))
     # yellow['pickup_location_id'] = yellow.map_partitions(
-    #     spatial_join, "pickup_longitude", "pickup_latitude",
+    #     assign_taxi_zones, "pickup_longitude", "pickup_latitude",
     #     "pickup_location_id", meta=('pickup_location_id', np.int64))
 
     yellow.to_parquet(
