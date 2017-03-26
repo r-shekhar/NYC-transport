@@ -239,6 +239,8 @@ def main(client):
     #     assign_taxi_zones, "pickup_longitude", "pickup_latitude",
     #     "pickup_location_id", meta=('pickup_location_id', np.float64))
 
+    green = green.reset_index()
+
     trymakedirs(os.path.join(config['parquet_output_path']))
     green.to_parquet(
         os.path.join(config['parquet_output_path'], 'green.parquet'),
@@ -316,6 +318,8 @@ def main(client):
     # yellow['pickup_location_id'] = yellow.map_partitions(
     #     assign_taxi_zones, "pickup_longitude", "pickup_latitude",
     #     "pickup_location_id", meta=('pickup_location_id', np.int64))
+
+    yellow = yellow.reset_index()    
 
     yellow.to_parquet(
         os.path.join(config['parquet_output_path'], 'yellow.parquet'),
