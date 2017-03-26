@@ -44,7 +44,7 @@ def assign_taxi_zones(df, lon_var, lat_var, locid_var):
     """
 
     localdf = df[[lon_var, lat_var, locid_var]].copy()
-    localdf = localdf.reset_index()
+    # localdf = localdf.reset_index()
     localdf[lon_var] = localdf[lon_var].fillna(value=0.)
     localdf[lat_var] = localdf[lat_var].fillna(value=0.)
     localdf['replace_locid'] = (localdf[locid_var].isnull()
@@ -61,11 +61,17 @@ def assign_taxi_zones(df, lon_var, lat_var, locid_var):
                 localdf, crs={'init': 'epsg:4326'},
                 geometry=[Point(xy) for xy in
                           zip(localdf[lon_var], localdf[lat_var])])
+
             local_gdf = geopandas.sjoin(
                 local_gdf, shape_df, how='left', op='intersects')
 
+            # one point can intersect more than one zone -- for example if on
+            # the boundary between two zones. Deduplicate by taking first valid.
+            local_gdf = local_gdf[~local_gdf.index.duplicated(keep='first')]
+
             local_gdf.LocationID.values[~local_gdf.replace_locid] = (
                 (local_gdf[locid_var])[~local_gdf.replace_locid]).values
+
             return local_gdf.LocationID.rename(locid_var)
         except ValueError as ve:
             print(ve)
@@ -79,39 +85,37 @@ def assign_taxi_zones(df, lon_var, lat_var, locid_var):
 def main(client):
     green = dd.read_parquet('/data/green.parquet')
     green = green.reset_index(drop=True)
-    for i in range(54, green.npartitions):
-        df = green.get_partition(i).compute()
-        
-    
-        df['dropoff_location_id'] = assign_taxi_zones(
-            df, "dropoff_longitude", "dropoff_latitude",
-            "dropoff_location_id")
-        df['pickup_location_id'] = assign_taxi_zones(
-            df, "pickup_longitude", "pickup_latitude",
-            "pickup_location_id")
+    green['dropoff_location_id'] = green.map_partitions(
+        assign_taxi_zones, "dropoff_longitude", "dropoff_latitude",
+        "dropoff_location_id", meta=('dropoff_location_id', np.float64))
+    green['pickup_location_id'] = green.map_partitions(
+        assign_taxi_zones, "pickup_longitude", "pickup_latitude",
+        "pickup_location_id", meta=('pickup_location_id', np.float64))
 
-        df.to_hdf('/data/green_{0:04d}.hdf'.format(i), '/data', format='t', complib='blosc', complevel=1)
+    green.to_parquet(
+        os.path.join('/data/', 'green_with_zones.parquet'),
+        compression="SNAPPY",
+        has_nulls=True,
+        object_encoding='json')
 
     yellow = dd.read_parquet('/data/yellow.parquet')
     yellow = yellow.reset_index(drop=True)
-    for i in range(yellow.npartitions):
-        df = yellow.get_partition(i).compute()
-    
-        df['dropoff_location_id'] = assign_taxi_zones(
-            df, "dropoff_longitude", "dropoff_latitude",
-            "dropoff_location_id")
-        df['pickup_location_id'] = assign_taxi_zones(
-            df, "pickup_longitude", "pickup_latitude",
-            "pickup_location_id")
+    yellow['dropoff_location_id'] = yellow.map_partitions(
+        assign_taxi_zones, "dropoff_longitude", "dropoff_latitude",
+        "dropoff_location_id", meta=('dropoff_location_id', np.float64))
+    yellow['pickup_location_id'] = yellow.map_partitions(
+        assign_taxi_zones, "pickup_longitude", "pickup_latitude",
+        "pickup_location_id", meta=('pickup_location_id', np.float64))
 
-        df.to_hdf('/data/yellow_{0:04d}.hdf'.format(i), '/data', format='t', complib='blosc', complevel=1)
-        
-
-
+    yellow.to_parquet(
+        os.path.join('/data/', 'yellow_with_zones.parquet'),
+        compression="SNAPPY",
+        has_nulls=True,
+        object_encoding='json')
     return
 
 if __name__ == '__main__':
+    client = Client()
 
-    
-    client = None
+
     main(client)
