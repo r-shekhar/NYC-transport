@@ -3,6 +3,7 @@
 from dask.distributed import Client
 from glob import glob
 
+import dask.dataframe as dd
 import pandas as pd
 from dask import delayed
 import dask.bag as db
@@ -119,18 +120,25 @@ def main(files, client):
     bag = db.from_delayed([delayed(parse_single_file)(fn) for fn in files])
     df = bag.to_dataframe(columns=columns)
 
+    # Nonstandard and inconsistent date formats in input. 
+    # These two lines standardize to ISO.
     df['endtime'] = df['endtime'].astype(np.datetime64)
+    df['endtime'] = df['endtime'].astype(str)
 
-    df.cumul_entries.astype(np.int64)
-    df.cumul_exits.astype(np.int64)
-    df = df.set_index('unit', compute=False)
-    client.persist(df)
+    df['cumul_entries'] = df.cumul_entries.astype(np.int64)
+    df['cumul_exits'] = df.cumul_exits.astype(np.int64)
 
-    df = df.repartition(npartitions=20)
-    df = df.categorize()
     df.to_parquet(os.path.join(config['parquet_output_path'], 'subway.parquet'),
                   compression="SNAPPY", object_encoding='json'
                   )
+    df = dd.read_parquet(
+        os.path.join(config['parquet_output_path'], 'subway.parquet'))
+
+
+    df.to_csv('/data3/csv/subway-*.csv.gz', index=False,
+        name_function=lambda l: '{0:04d}'.format(l),
+        compression='gzip'
+        )
 
 
 if __name__ == '__main__':
