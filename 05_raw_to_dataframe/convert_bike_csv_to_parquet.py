@@ -60,16 +60,14 @@ def main(client):
     df['start_station_name'] = df.start_station_name.str.strip('"')
     df['end_station_name'] = df.end_station_name.str.strip('"')
 
-
     df.to_parquet(
         os.path.join(config['parquet_output_path'], 'citibike.parquet'),
-        compression="SNAPPY", object_encoding='json')
+        compression="GZIP", object_encoding='json')
 
     df = dd.read_parquet(os.path.join(
         config['parquet_output_path'], 'citibike.parquet'))
 
-
-    df.to_csv('/data3/csv/citibike-*.csv.gz', index=False,
+    df.to_csv('/bigdata/csv/citibike-*.csv.gz', index=False,
         name_function=lambda l: '{0:04d}'.format(l),
         compression='gzip'
         )
