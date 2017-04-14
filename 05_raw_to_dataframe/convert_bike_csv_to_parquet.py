@@ -67,7 +67,9 @@ def main(client):
     df = dd.read_parquet(os.path.join(
         config['parquet_output_path'], 'citibike.parquet'))
 
-    df.to_csv('/bigdata/csv/citibike-*.csv.gz', index=False,
+    df.to_csv(
+        os.path.join(config["parquet_output_path"], 'csv/citibike-*.csv.gz'), 
+        index=False,
         name_function=lambda l: '{0:04d}'.format(l),
         compression='gzip'
         )

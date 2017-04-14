@@ -409,7 +409,9 @@ def main(client):
 
     all_trips = all_trips.repartition(npartitions=1000)
 
-    all_trips.to_csv('/bigdata/csv/all_trips_locid-*.csv.gz', index=False,
+    all_trips.to_csv(
+        os.path.join(config["parquet_output_path"], 'csv/all_trips_locid-*.csv.gz'), 
+        index=False,
         name_function=lambda l: '{0:04d}'.format(l),
         compression='gzip'
         )

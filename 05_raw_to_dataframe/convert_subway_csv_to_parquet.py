@@ -122,16 +122,11 @@ def main(files, client):
 
     # Nonstandard and inconsistent date formats in input. 
     # These two lines standardize to ISO.
-    df['endtime'] = df['endtime'].astype(np.datetime64).astype(str)
-
+    df['endtime'] = df['endtime'].astype(np.datetime64)
+    df['endtime'] = df['endtime'].astype(str)
 
     df['cumul_entries'] = df.cumul_entries.astype(np.int64)
     df['cumul_exits'] = df.cumul_exits.astype(np.int64)
-
-    print(df.head())
-    print(df.tail())
-
-    assert('endtime' in df.columns)
 
     df.to_parquet(os.path.join(config['parquet_output_path'], 'subway.parquet'),
                   compression="SNAPPY", object_encoding='json'
@@ -139,10 +134,12 @@ def main(files, client):
     df = dd.read_parquet(
         os.path.join(config['parquet_output_path'], 'subway.parquet'))
 
-    assert('endtime' in df.columns)
 
-    df.to_csv('/data3/csv/subway-*.csv', index=False,
-        name_function=lambda l: '{0:04d}'.format(l)
+    df.to_csv(
+        os.path.join(config["parquet_output_path"], 'csv/subway-*.csv.gz'), 
+        index=False,
+        name_function=lambda l: '{0:04d}'.format(l),
+        compression='gzip'
         )
 
 
