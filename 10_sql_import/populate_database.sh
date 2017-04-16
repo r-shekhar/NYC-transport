@@ -3,8 +3,9 @@ set -e
 
 echo "Ingesting bike data."
 
-mkfifo bikefifo && zcat /bigdata/csv/citibike*csv |grep -v start >> bikefifo &
+mkfifo bikefifo && zcat /bigdata/csv/citibike*csv.gz |grep -v start >> bikefifo &
 psql `cat ~/.sqlconninfo` <<EOF 
+DROP TABLE IF EXISTS bike_ingest;
 CREATE TABLE bike_ingest(
     biketrip_id BIGSERIAL,
     trip_duration INTEGER,
@@ -12,30 +13,27 @@ CREATE TABLE bike_ingest(
     stop_time TIMESTAMP,
     start_station_id INTEGER,
     start_station_name VARCHAR(60),
-    start_station_latitude DOUBLE PRECISION,
-    start_station_longitude DOUBLE PRECISION,
+    start_station_latitude REAL,
+    start_station_longitude REAL,
     end_station_id INTEGER,
     end_station_name VARCHAR(60),
-    end_station_latitude DOUBLE PRECISION,
-    end_station_longitude DOUBLE PRECISION,
+    end_station_latitude REAL,
+    end_station_longitude REAL,
     bike_id BIGINT,
     user_type VARCHAR(15),
     birth_year REAL,
     gender INTEGER
 );
 
-\copy bike_ingest(trip_duration, start_time, stop_time, start_station_id,
-    start_station_name, start_station_latitude, start_station_longitude,
-    end_station_id, end_station_name, end_station_latitude,
-    end_station_longitude, bike_id,user_type, birth_year,gender) 
-FROM bikefifo DELIMITERS ',' CSV;
+\copy bike_ingest(trip_duration, start_time, stop_time, start_station_id, start_station_name, start_station_latitude, start_station_longitude, end_station_id, end_station_name, end_station_latitude, end_station_longitude, bike_id,user_type, birth_year,gender) FROM bikefifo DELIMITERS ',' CSV;
 EOF
 rm bikefifo;
 echo "Bike Data ingested."
 
 echo "Ingesting Subway data."
-mkfifo subwayfifo && zcat /bigdata/csv/subway*csv |grep -v endtime >> subwayfifo &
+mkfifo subwayfifo && zcat /bigdata/csv/subway*.csv.gz |grep --text -v endtime  >> subwayfifo &
 psql `cat ~/.sqlconninfo` <<EOF
+DROP TABLE IF EXISTS subway_ingest;
 CREATE TABLE subway_ingest(
     turnstile_id BIGSERIAL,
     endtime TIMESTAMP,
@@ -50,21 +48,20 @@ CREATE TABLE subway_ingest(
     cumul_exits BIGINT
 );
 
-\copy subway_ingest(endtime, ca, unit, scp, station, linename, division, 
-    description, cumul_entries, cumul_exits)
-FROM subwayfifo DELIMITERS ',' CSV;
+\copy subway_ingest(endtime, ca, unit, scp, station, linename, division, description, cumul_entries, cumul_exits) FROM subwayfifo DELIMITERS ',' CSV;
 EOF
 rm subwayfifo;
 echo "Subway data ingested."
 
 echo "Creating trips table."
 psql `cat ~/.sqlconninfo` <<EOF
+DROP TABLE IF EXISTS trip_ingest;
 CREATE TABLE trip_ingest(
     trip_id BIGSERIAL,
     dropoff_datetime TIMESTAMP,
-    dropoff_latitude DOUBLE PRECISION,
+    dropoff_latitude REAL,
     dropoff_location_id REAL,
-    dropoff_longitude DOUBLE PRECISION,
+    dropoff_longitude REAL,
     ehail_fee REAL,
     extra VARCHAR(10),
     fare_amount REAL,
@@ -73,9 +70,9 @@ CREATE TABLE trip_ingest(
     passenger_count INTEGER,
     payment_type VARCHAR(10),
     pickup_datetime TIMESTAMP,
-    pickup_latitude DOUBLE PRECISION,
+    pickup_latitude REAL,
     pickup_location_id REAL,
-    pickup_longitude DOUBLE PRECISION,
+    pickup_longitude REAL,
     rate_code_id INTEGER,
     store_and_fwd_flag VARCHAR(10),
     tip_amount REAL,
@@ -95,13 +92,7 @@ zcat $x > taxififo &
 sleep 1;
 echo "Ingesting $x"
 psql `cat ~/.sqlconninfo` <<EOF
-\copy trip_ingest(dropoff_datetime, dropoff_latitude, dropoff_location_id, 
-    dropoff_longitude, ehail_fee, extra, fare_amount, improvement_surcharge, 
-    mta_tax, passenger_count, payment_type, pickup_datetime, pickup_latitude, 
-    pickup_location_id, pickup_longitude, rate_code_id, store_and_fwd_flag, 
-    tip_amount, tolls_amount, total_amount, trip_distance, trip_type, 
-    vendor_id)
-FROM subwayfifo DELIMITERS ',' CSV;
+\copy trip_ingest(dropoff_datetime, dropoff_latitude, dropoff_location_id, dropoff_longitude, ehail_fee, extra, fare_amount, improvement_surcharge, mta_tax, passenger_count, payment_type, pickup_datetime, pickup_latitude, pickup_location_id, pickup_longitude, rate_code_id, store_and_fwd_flag, tip_amount, tolls_amount, total_amount, trip_distance, trip_type, vendor_id) FROM subwayfifo DELIMITERS ',' CSV;
 EOF
 echo "Ingested $x."
 sleep 2;
