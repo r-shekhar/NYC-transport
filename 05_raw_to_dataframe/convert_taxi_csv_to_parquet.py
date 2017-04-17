@@ -379,19 +379,18 @@ def get_uber():
 
 def main(client):
 
-    uber = get_uber()
     green = get_green()
     yellow = get_yellow()
 
-    all_trips = uber.append(green).append(yellow)
+    all_trips = green.append(yellow)
     all_trips = all_trips[sorted(all_trips.columns)]    
 
-    all_trips['dropoff_location_id'] = all_trips.map_partitions(
-        assign_taxi_zones, "dropoff_longitude", "dropoff_latitude",
-        "dropoff_location_id", meta=('dropoff_location_id', np.float64))
-    all_trips['pickup_location_id'] = all_trips.map_partitions(
-        assign_taxi_zones, "pickup_longitude", "pickup_latitude",
-        "pickup_location_id", meta=('pickup_location_id', np.float64))
+    # all_trips['dropoff_location_id'] = all_trips.map_partitions(
+    #     assign_taxi_zones, "dropoff_longitude", "dropoff_latitude",
+    #     "dropoff_location_id", meta=('dropoff_location_id', np.float64))
+    # all_trips['pickup_location_id'] = all_trips.map_partitions(
+    #     assign_taxi_zones, "pickup_longitude", "pickup_latitude",
+    #     "pickup_location_id", meta=('pickup_location_id', np.float64))
 
     all_trips['dropoff_datetime'] = all_trips.dropoff_datetime.astype(str)
     all_trips['pickup_datetime'] = all_trips.pickup_datetime.astype(str)
@@ -399,22 +398,49 @@ def main(client):
     all_trips['dropoff_datetime'] = all_trips.dropoff_datetime.str.replace('NaT', '1970-01-01 00:00:00')
     all_trips['pickup_datetime'] = all_trips.pickup_datetime.str.replace('NaT', '1970-01-01 00:00:00')    
 
-    all_trips.to_parquet(
-        os.path.join(config['parquet_output_path'], 'all_trips_locid.parquet'),
-        compression="GZIP", has_nulls=True,
-        object_encoding='json')
 
-    all_trips = dd.read_parquet(
-        os.path.join(config['parquet_output_path'], 'all_trips_locid.parquet'))
+
+    u = get_uber()
+    u = u[sorted(u.columns)]  
+
+    # u['dropoff_location_id'] = u.map_partitions(
+    #     assign_taxi_zones, "dropoff_longitude", "dropoff_latitude",
+    #     "dropoff_location_id", meta=('dropoff_location_id', np.float64))
+    # u['pickup_location_id'] = u.map_partitions(
+    #     assign_taxi_zones, "pickup_longitude", "pickup_latitude",
+    #     "pickup_location_id", meta=('pickup_location_id', np.float64))
+
+
 
     all_trips = all_trips.repartition(npartitions=1000)
-
+    all_trips.to_parquet(
+        os.path.join(config['parquet_output_path'], 'all_trips.parquet'),
+        compression="GZIP", has_nulls=True,
+        object_encoding='json')
+    all_trips = dd.read_parquet(
+        os.path.join(config['parquet_output_path'], 'all_trips.parquet'),
+        )
     all_trips.to_csv(
-        os.path.join(config["parquet_output_path"], 'csv/all_trips_locid-*.csv.gz'), 
+        os.path.join(config["parquet_output_path"], 'csv/all_trips-*.csv.gz'), 
         index=False,
         name_function=lambda l: '{0:04d}'.format(l),
         compression='gzip'
         )
+
+    u.to_parquet(
+        os.path.join(config['parquet_output_path'], 'uber.parquet'),
+        compression="GZIP", has_nulls=True,
+        object_encoding='json')
+    u = dd.read_parquet(
+        os.path.join(config['parquet_output_path'], 'uber.parquet'),
+        )    
+    u.to_csv(os.path.join(config["parquet_output_path"], 'csv/uber-*.csv.gz'),
+        index=False,
+        compression='gzip',
+        )
+
+
+
 
 
 if __name__ == '__main__':
