@@ -1,8 +1,8 @@
 {
-    "citibike_raw_data_path" : "/bigdata/raw_data/bike/",
-    "taxi_raw_data_path" : "/bigdata/raw_data/taxi/",
-    "uber_raw_data_path" : "/bigdata/raw_data/uber/",
-    "subway_raw_data_path" : "/bigdata/raw_data/subway/",
+    "citibike_raw_data_path" : "/data/raw_data/bike/",
+    "taxi_raw_data_path" : "/data/raw_data/taxi/",
+    "uber_raw_data_path" : "/data/raw_data/uber/",
+    "subway_raw_data_path" : "/data/raw_data/subway/",
     
     "parquet_output_path" : "/bigdata/"
 }

@@ -123,7 +123,7 @@ def main(files, client):
     # Nonstandard and inconsistent date formats in input. 
     # These two lines standardize to ISO.
     df['endtime'] = df['endtime'].astype(np.datetime64)
-    df['endtime'] = df['endtime'].astype(str)
+#    df['endtime'] = df['endtime'].astype(str)
 
     df['cumul_entries'] = df.cumul_entries.astype(np.int64)
     df['cumul_exits'] = df.cumul_exits.astype(np.int64)
@@ -131,19 +131,20 @@ def main(files, client):
     df.to_parquet(os.path.join(config['parquet_output_path'], 'subway.parquet'),
                   compression="SNAPPY", object_encoding='json'
                   )
-    df = dd.read_parquet(
-        os.path.join(config['parquet_output_path'], 'subway.parquet'))
+#    df = dd.read_parquet(
+#        os.path.join(config['parquet_output_path'], 'subway.parquet'))
 
 
-    df.to_csv(
-        os.path.join(config["parquet_output_path"], 'csv/subway-*.csv.gz'), 
-        name_function=lambda l: '{0:04d}'.format(l),
-        compression='gzip'
-        )
+#    df.to_csv(
+#        os.path.join(config["parquet_output_path"], 'csv/subway-*.csv.gz'), 
+#        name_function=lambda l: '{0:04d}'.format(l),
+#        compression='gzip'
+#        )
 
 
 if __name__ == '__main__':
-    client = Client()
+    client = Client('localhost:8786')
+    client.restart()
     files = sorted(
             glob(os.path.join(config["subway_raw_data_path"],
                               'turnstile*.txt')))

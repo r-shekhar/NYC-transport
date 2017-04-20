@@ -54,28 +54,29 @@ def main(client):
         if fieldName in dtype_list:
             df[fieldName] = df[fieldName].astype(dtype_list[fieldName])
 
-    df['start_time'] = df.start_time.astype(str)
-    df['stop_time'] = df.stop_time.astype(str)
+#    df['start_time'] = df.start_time.astype(str)
+#    df['stop_time'] = df.stop_time.astype(str)
 
     df['start_station_name'] = df.start_station_name.str.strip('"')
     df['end_station_name'] = df.end_station_name.str.strip('"')
 
     df.to_parquet(
         os.path.join(config['parquet_output_path'], 'citibike.parquet'),
-        compression="GZIP", object_encoding='json')
+        compression="SNAPPY", object_encoding='json')
 
-    df = dd.read_parquet(os.path.join(
-        config['parquet_output_path'], 'citibike.parquet'))
+#    df = dd.read_parquet(os.path.join(
+#        config['parquet_output_path'], 'citibike.parquet'))
 
-    df.to_csv(
-        os.path.join(config["parquet_output_path"], 'csv/citibike-*.csv.gz'), 
-        index=False,
-        name_function=lambda l: '{0:04d}'.format(l),
-        compression='gzip'
-        )
+#    df.to_csv(
+#        os.path.join(config["parquet_output_path"], 'csv/citibike-*.csv.gz'), 
+#        index=False,
+#        name_function=lambda l: '{0:04d}'.format(l),
+#        compression='gzip'
+#        )
 
 
 
 if __name__ == '__main__':
-    client = Client()
+    client = Client('localhost:8786')
+    client.restart()
     main(client)
