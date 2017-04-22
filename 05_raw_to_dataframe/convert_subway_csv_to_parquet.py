@@ -20,15 +20,15 @@ datatypes = (object, object, object, object, object, object,
              object, object, np.int64, np.int64)
 
 dtype_list = {'ca':  object,
- 'cumul_entries':  np.int64,
- 'cumul_exits':  np.int64,
- 'description':  object,
- 'division':  object,
- 'endtime':  object,
- 'linename':  object,
- 'scp':  object,
- 'station':  object,
- 'unit':  object}
+              'cumul_entries':  np.int64,
+              'cumul_exits':  np.int64,
+              'description':  object,
+              'division':  object,
+              'endtime':  object,
+              'linename':  object,
+              'scp':  object,
+              'station':  object,
+              'unit':  object}
 
 with open('config.json', 'r') as fh:
     config = json.load(fh)
@@ -40,6 +40,7 @@ def grouper(iterable, n, fillvalue=None):
     # grouper('ABCDEFG', 3, 'x') --> ABC DEF Gxx
     args = [iter(iterable)] * n
     return six.itertools.zip_longest(fillvalue=fillvalue, *args)
+
 
 def parse_line(l):
     l = l.strip()
@@ -83,8 +84,9 @@ def parse_line(l):
                 values = l2[0:3]
                 values.extend(['NULL', ]*3)
                 values.extend(t)
-                values[6] = parser.parse("{} {}".format(*values[6:8])).isoformat()
-                values.pop(7) # folded info into item 6
+                values[6] = parser.parse(
+                    "{} {}".format(*values[6:8])).isoformat()
+                values.pop(7)  # folded info into item 6
                 for i in range(len(datatypes)):
                     if datatypes[i] == np.int64:
                         values[i] = int(values[i])
@@ -104,26 +106,27 @@ def parse_line(l):
 
     return RV
 
+
 def parse_single_file(filename):
     with open(filename) as fh:
-        d = filter(lambda l: not (l is None), map(parse_line, fh.readlines()), )
+        d = filter(lambda l: not (l is None),
+                   map(parse_line, fh.readlines()), )
         d = list(itertools.chain(*d))
 
         df = pd.DataFrame(d, columns=columns)
         print(df.shape)
-        print( '{} : {}'.format(filename, len(d)))
+        print('{} : {}'.format(filename, len(d)))
         return d
 
-def main(files, client):
 
+def main(files, client):
 
     bag = db.from_delayed([delayed(parse_single_file)(fn) for fn in files])
     df = bag.to_dataframe(columns=columns)
 
-    # Nonstandard and inconsistent date formats in input. 
+    # Nonstandard and inconsistent date formats in input.
     # These two lines standardize to ISO.
     df['endtime'] = df['endtime'].astype(np.datetime64)
-#    df['endtime'] = df['endtime'].astype(str)
 
     df['cumul_entries'] = df.cumul_entries.astype(np.int64)
     df['cumul_exits'] = df.cumul_exits.astype(np.int64)
@@ -131,22 +134,23 @@ def main(files, client):
     df.to_parquet(os.path.join(config['parquet_output_path'], 'subway.parquet'),
                   compression="SNAPPY", object_encoding='json'
                   )
-#    df = dd.read_parquet(
-#        os.path.join(config['parquet_output_path'], 'subway.parquet'))
+    df = dd.read_parquet(
+        os.path.join(config['parquet_output_path'], 'subway.parquet'))
+    df['endtime'] = df['endtime'].astype(str)
 
+    df = df.reset_index()
 
-#    df.to_csv(
-#        os.path.join(config["parquet_output_path"], 'csv/subway-*.csv.gz'), 
-#        name_function=lambda l: '{0:04d}'.format(l),
-#        compression='gzip'
-#        )
+    df.to_csv(
+       os.path.join(config["parquet_output_path"], 'csv/subway-*.csv.xz'),
+       index=False,
+       name_function=lambda l: '{0:04d}'.format(l),
+       compression='xz'
+       )
 
 
 if __name__ == '__main__':
-    client = Client('localhost:8786')
-    client.restart()
+    client = Client()
     files = sorted(
-            glob(os.path.join(config["subway_raw_data_path"],
-                              'turnstile*.txt')))
+        glob(os.path.join(config["subway_raw_data_path"],
+                          'turnstile*.txt')))
     main(files, client)
-
