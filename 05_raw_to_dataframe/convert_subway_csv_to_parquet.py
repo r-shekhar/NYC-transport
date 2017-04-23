@@ -133,11 +133,11 @@ def main(files, client):
 
     df = df.repartition(npartitions=50)
 
-    # df.to_parquet(os.path.join(config['parquet_output_path'], 'subway.parquet'),
-    #               compression="SNAPPY", object_encoding='json'
-    #               )
-    # df = dd.read_parquet(
-    #     os.path.join(config['parquet_output_path'], 'subway.parquet'))
+    df.to_parquet(os.path.join(config['parquet_output_path'], 'subway.parquet'),
+                  compression="SNAPPY", object_encoding='json'
+                  )
+    df = dd.read_parquet(
+        os.path.join(config['parquet_output_path'], 'subway.parquet'))
 
     df.to_csv(
        os.path.join(config["parquet_output_path"], 'csv/subway-*.csv'),
