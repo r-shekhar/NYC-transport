@@ -3,7 +3,7 @@ set -e
 
 echo "Ingesting bike data."
 
-mkfifo bikefifo && zcat /bigdata/csv/citibike*csv.gz |grep -v start >> bikefifo &
+mkfifo bikefifo && lzop -c /bigdata/csv/citibike*.csv.lzo |grep -v start >> bikefifo &
 psql `cat ~/.sqlconninfo` <<EOF 
 DROP TABLE IF EXISTS bike_ingest;
 CREATE TABLE bike_ingest(
@@ -22,7 +22,7 @@ CREATE TABLE bike_ingest(
     bike_id BIGINT,
     user_type VARCHAR(15),
     birth_year REAL,
-    gender INTEGER
+    gender INTEGER    
 );
 
 \copy bike_ingest(trip_duration, start_time, stop_time, start_station_id, start_station_name, start_station_latitude, start_station_longitude, end_station_id, end_station_name, end_station_latitude, end_station_longitude, bike_id,user_type, birth_year,gender) FROM bikefifo DELIMITERS ',' CSV;
@@ -50,9 +50,9 @@ CREATE TABLE subway_ingest(
     cumul_exits BIGINT
 );
 EOF
-for x in /bigdata/csv/subway*.csv.gz
+for x in /bigdata/csv/subway*.csv.lzo
 do echo $x;
-zcat $x | grep --text -v '"' > subwayfifo &
+lzop -c $x | grep --text -v '"' > subwayfifo &
 psql `cat ~/.sqlconninfo` <<EOF
 \copy subway_ingest(endtime, ca, unit, scp, station, linename, division, description, cumul_entries, cumul_exits) FROM subwayfifo DELIMITERS ',' CSV HEADER;
 EOF
@@ -61,10 +61,10 @@ rm subwayfifo;
 
 echo "Subway data ingested."
 
-echo "Creating trips table."
+echo "Creating Taxi table."
 psql `cat ~/.sqlconninfo` <<EOF
-DROP TABLE IF EXISTS trip_ingest;
-CREATE TABLE trip_ingest(
+DROP TABLE IF EXISTS taxi_ingest;
+CREATE TABLE taxi_ingest(
     trip_id BIGSERIAL,
     dropoff_datetime TIMESTAMP,
     dropoff_latitude REAL,
@@ -93,28 +93,17 @@ CREATE TABLE trip_ingest(
 EOF
 
 mkfifo taxififo
-
-for x in /bigdata/csv/uber*.csv.gz
-do echo "Processing ${x}"
-zcat $x > taxififo &
-psql `cat ~/.sqlconninfo` <<EOF
-\copy trip_ingest(dropoff_datetime, dropoff_latitude, dropoff_location_id, dropoff_longitude, ehail_fee, extra, fare_amount, improvement_surcharge, mta_tax, passenger_count, payment_type, pickup_datetime, pickup_latitude, pickup_location_id, pickup_longitude, rate_code_id, store_and_fwd_flag, tip_amount, tolls_amount, total_amount, trip_distance, trip_type, vendor_id) FROM taxififo DELIMITERS ',' CSV HEADER;
-EOF
-echo "Ingested $x"
-done;
-echo "Ingested Uber data"
-
-for x in /bigdata/csv/all*csv.gz
+for x in /bigdata/csv/all*csv.lzo
 do echo "Processing ${x}";
-zcat $x > taxififo &
+lzop -c $x > taxififo &
 echo "Ingesting $x"
 psql `cat ~/.sqlconninfo` <<EOF
-\copy trip_ingest(dropoff_datetime, dropoff_latitude, dropoff_location_id, dropoff_longitude, ehail_fee, extra, fare_amount, improvement_surcharge, mta_tax, passenger_count, payment_type, pickup_datetime, pickup_latitude, pickup_location_id, pickup_longitude, rate_code_id, store_and_fwd_flag, tip_amount, tolls_amount, total_amount, trip_distance, trip_type, vendor_id) FROM taxififo DELIMITERS ',' CSV HEADER;
+\copy taxi_ingest(dropoff_datetime, dropoff_latitude, dropoff_location_id, dropoff_longitude, ehail_fee, extra, fare_amount, improvement_surcharge, mta_tax, passenger_count, payment_type, pickup_datetime, pickup_latitude, pickup_location_id, pickup_longitude, rate_code_id, store_and_fwd_flag, tip_amount, tolls_amount, total_amount, trip_distance, trip_type, vendor_id) FROM taxififo DELIMITERS ',' CSV HEADER;
 EOF
 echo "Ingested $x."
 sleep 1;
 done
 
 rm taxififo
-echo "Trips table ingest complete"
+echo "Taxi table ingest complete"
 

@@ -22,7 +22,7 @@ CREATE extension postgis;
 CREATE extension cstore_fdw;
 EOF
 
-# shp2pgsql -s 2263:4326 ../shapefiles/nyct2010.shp | psql -d transitproject
+shp2pgsql -s 2263:4326 ../shapefiles/nyct2010.shp | psql -d transitproject
 shp2pgsql -s 2263:4326 ../shapefiles/taxi_zones.shp | psql -d transitproject
 
 psql -d transitproject<<EOF
