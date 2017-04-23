@@ -131,20 +131,18 @@ def main(files, client):
     df['cumul_entries'] = df.cumul_entries.astype(np.int64)
     df['cumul_exits'] = df.cumul_exits.astype(np.int64)
 
-    df.to_parquet(os.path.join(config['parquet_output_path'], 'subway.parquet'),
-                  compression="SNAPPY", object_encoding='json'
-                  )
-    df = dd.read_parquet(
-        os.path.join(config['parquet_output_path'], 'subway.parquet'))
-    df['endtime'] = df['endtime'].astype(str)
+    df = df.repartition(npartitions=50)
 
-    df = df.reset_index()
+    # df.to_parquet(os.path.join(config['parquet_output_path'], 'subway.parquet'),
+    #               compression="SNAPPY", object_encoding='json'
+    #               )
+    # df = dd.read_parquet(
+    #     os.path.join(config['parquet_output_path'], 'subway.parquet'))
 
     df.to_csv(
-       os.path.join(config["parquet_output_path"], 'csv/subway-*.csv.xz'),
+       os.path.join(config["parquet_output_path"], 'csv/subway-*.csv'),
        index=False,
-       name_function=lambda l: '{0:04d}'.format(l),
-       compression='xz'
+       name_function=lambda l: '{0:04d}'.format(l)
        )
 
 

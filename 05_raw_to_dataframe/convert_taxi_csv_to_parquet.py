@@ -121,7 +121,7 @@ def assign_taxi_zones(df, lon_var, lat_var, locid_var):
             local_gdf.LocationID.values[~local_gdf.replace_locid] = (
                 (local_gdf[locid_var])[~local_gdf.replace_locid]).values
 
-            return local_gdf.LocationID.rename(locid_var)
+            return local_gdf.LocationID.rename(locid_var).astype(np.float64)
         except ValueError as ve:
             print(ve)
             print(ve.stacktrace())
@@ -303,7 +303,7 @@ def get_uber():
     dtype_list = { 
         # 'dropoff_datetime': np.int64,
         'dropoff_latitude': np.float64,
-        'dropoff_location_id': np.int64,
+        'dropoff_location_id': np.float64,
         'dropoff_longitude': np.float64,
         'ehail_fee': np.float64,
         'extra': np.float64,
@@ -316,7 +316,7 @@ def get_uber():
         'payment_type': object,
     #     'pickup_datetime': object, # set by parse_dates in pandas read_csv
         'pickup_latitude': np.float64,
-        'pickup_location_id': np.int64,
+        'pickup_location_id': np.float64,
         'pickup_longitude': np.float64,
         'rate_code_id': np.int64,
         'store_and_fwd_flag': object,
@@ -335,7 +335,7 @@ def get_uber():
                          dtype=dtype_list,
                          names=uber_schema_2014.split(','))
     uber1 = uber1.drop(['junk1',], axis=1)
-    uber1 = uber1.assign(pickup_location_id=-999)
+    uber1 = uber1.assign(pickup_location_id=np.nan)
 
     uber2 = dd.read_csv(uber_glob_2015, header=0,
                          na_values=["NA"], 
@@ -383,14 +383,18 @@ def main(client):
 
     all_trips = uber.append(green).append(yellow)
 
-    all_trips = all_trips[sorted(all_trips.columns)]    
+    all_trips = all_trips[sorted(all_trips.columns)]
 
+    ## Comment this to eliminate location_ids
     # all_trips['dropoff_location_id'] = all_trips.map_partitions(
     #     assign_taxi_zones, "dropoff_longitude", "dropoff_latitude",
     #     "dropoff_location_id", meta=('dropoff_location_id', np.float64))
     # all_trips['pickup_location_id'] = all_trips.map_partitions(
     #     assign_taxi_zones, "pickup_longitude", "pickup_latitude",
     #     "pickup_location_id", meta=('pickup_location_id', np.float64))
+
+    all_trips = all_trips.repartition(npartitions=1500)
+    
 
     all_trips.to_parquet(
         os.path.join(config['parquet_output_path'], 'all_trips.parquet'),
@@ -400,7 +404,6 @@ def main(client):
     all_trips = dd.read_parquet(
         os.path.join(config['parquet_output_path'], 'all_trips.parquet'))
 
-    all_trips = all_trips.reset_index()
 
     all_trips['dropoff_datetime'] = all_trips.dropoff_datetime.astype(str)
     all_trips['pickup_datetime'] = all_trips.pickup_datetime.astype(str)
