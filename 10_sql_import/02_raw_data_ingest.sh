@@ -3,7 +3,9 @@ set -e
 
 echo "Ingesting bike data."
 
-mkfifo bikefifo && lzop -c /bigdata/csv/citibike*.csv.lzo |grep -v start >> bikefifo &
+rm -f bikefifo subwayfifo taxififo
+
+mkfifo bikefifo && lzop -cd /bigdata/csv/citibike*.csv.lzo |grep -v start >> bikefifo &
 psql `cat ~/.sqlconninfo` <<EOF 
 DROP TABLE IF EXISTS bike_ingest;
 CREATE TABLE bike_ingest(
@@ -52,7 +54,7 @@ CREATE TABLE subway_ingest(
 EOF
 for x in /bigdata/csv/subway*.csv.lzo
 do echo $x;
-lzop -c $x | grep --text -v '"' > subwayfifo &
+lzop -cd $x | grep --text -v '"' > subwayfifo &
 psql `cat ~/.sqlconninfo` <<EOF
 \copy subway_ingest(endtime, ca, unit, scp, station, linename, division, description, cumul_entries, cumul_exits) FROM subwayfifo DELIMITERS ',' CSV HEADER;
 EOF
@@ -95,7 +97,7 @@ EOF
 mkfifo taxififo
 for x in /bigdata/csv/all*csv.lzo
 do echo "Processing ${x}";
-lzop -c $x > taxififo &
+lzop -cd $x > taxififo &
 echo "Ingesting $x"
 psql `cat ~/.sqlconninfo` <<EOF
 \copy taxi_ingest(dropoff_datetime, dropoff_latitude, dropoff_location_id, dropoff_longitude, ehail_fee, extra, fare_amount, improvement_surcharge, mta_tax, passenger_count, payment_type, pickup_datetime, pickup_latitude, pickup_location_id, pickup_longitude, rate_code_id, store_and_fwd_flag, tip_amount, tolls_amount, total_amount, trip_distance, trip_type, vendor_id) FROM taxififo DELIMITERS ',' CSV HEADER;

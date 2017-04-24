@@ -20,6 +20,9 @@ grant all privileges on all tables in schema public to transituser;
 alter role transituser with encrypted password 'yourpassword';
 CREATE extension postgis;
 CREATE extension cstore_fdw;
+CREATE SERVER cstore_server FOREIGN DATA WRAPPER cstore_fdw;
+GRANT ALL ON FOREIGN SERVER cstore_server TO transituser;
+grant usage on foreign data wrapper  cstore_fdw to transituser;
 EOF
 
 shp2pgsql -s 2263:4326 ../shapefiles/nyct2010.shp | psql -d transitproject
