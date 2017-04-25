@@ -1,0 +1,664 @@
+id,latitude,longitude,stationName,statusValue,totalDocks
+72,40.76727216,-73.99392888,W 52 St & 11 Ave,In Service,39
+79,40.71911552,-74.00666661,Franklin St & W Broadway,In Service,33
+82,40.71117416,-74.00016545,St James Pl & Pearl St,Not In Service,0
+83,40.68382604,-73.97632328,Atlantic Ave & Fort Greene Pl,In Service,62
+116,40.74177603,-74.00149746,W 17 St & 8 Ave,In Service,39
+119,40.69608941,-73.97803415,Park Ave & St Edwards St,In Service,19
+120,40.68676793,-73.95928168,Lexington Ave & Classon Ave,In Service,19
+127,40.73172428,-74.00674436,Barrow St & Hudson St,In Service,31
+128,40.72710258,-74.00297088,MacDougal St & Prince St,In Service,30
+137,40.761628,-73.972924,E 56 St & Madison Ave,Not In Service,0
+143,40.69239502,-73.99337909,Clinton St & Joralemon St,In Service,24
+144,40.69839895,-73.98068914,Nassau St & Navy St,In Service,19
+146,40.71625008,-74.0091059,Hudson St & Reade St,In Service,39
+147,40.71542197,-74.01121978,Greenwich St & Warren St,Not In Service,0
+150,40.7208736,-73.98085795,E 2 St & Avenue C,In Service,31
+151,40.722103786686034,-73.99724900722504,Cleveland Pl & Spring St,In Service,33
+152,40.71473993,-74.00910627,Warren St & Church St,In Service,29
+153,40.752062307,-73.9816324043,E 40 St & 5 Ave,In Service,55
+157,40.69089272,-73.99612349,Henry St & Atlantic Ave,In Service,23
+161,40.72917025,-73.99810231,LaGuardia Pl & W 3 St,In Service,35
+164,40.75323098,-73.97032517,E 47 St & 2 Ave,In Service,47
+167,40.7489006,-73.97604882,E 39 St & 3 Ave,In Service,45
+168,40.73971301,-73.99456405,W 18 St & 6 Ave,In Service,47
+173,40.76068327096592,-73.9845272898674,Broadway & W 49 St,In Service,51
+174,40.7381765,-73.97738662,E 25 St & 1 Ave,In Service,30
+195,40.70905623,-74.01043382,Liberty St & Broadway,In Service,45
+212,40.74334935,-74.00681753,W 16 St & The High Line,In Service,28
+216,40.70037867,-73.99548059,Columbia Heights & Cranberry St,In Service,23
+217,40.70277159,-73.99383605,Old Fulton St,In Service,39
+223,40.73781509,-73.99994661,W 13 St & 7 Ave,In Service,33
+224,40.71146364,-74.00552427,Spruce St & Nassau St,Not In Service,3
+225,40.74195138,-74.00803013,W 14 St & The High Line,In Service,37
+228,40.7546011026,-73.971878855,E 48 St & 3 Ave,In Service,55
+229,40.72743423,-73.99379025,Great Jones St,In Service,23
+232,40.69597683,-73.99014892,Cadman Plaza E & Tillary St,In Service,23
+236,40.7284186,-73.98713956,St Marks Pl & 2 Ave,In Service,39
+237,40.73047309,-73.98672378,E 11 St & 2 Ave,In Service,39
+238,40.7361967,-74.00859207,Bank St & Washington St,In Service,31
+239,40.69196566,-73.9813018,Willoughby St & Fleet St,In Service,31
+241,40.68981035,-73.97493121,DeKalb Ave & S Portland Ave,In Service,23
+242,40.697787,-73.973736,Carlton Ave & Flushing Ave,In Service,23
+243,40.688226,-73.979382,Fulton St & Rockwell Pl,In Service,31
+244,40.69196035,-73.96536851,Willoughby Ave & Hall St,In Service,31
+245,40.69327018,-73.97703874,Myrtle Ave & St Edwards St,In Service,23
+247,40.73535398,-74.00483091,Perry St & Bleecker St,In Service,20
+248,40.72185379,-74.00771779,Laight St & Hudson St,In Service,23
+249,40.71870987,-74.0090009,Harrison St & Hudson St,In Service,27
+251,40.72317958,-73.99480012,Mott St & Prince St,In Service,27
+252,40.73226398,-73.99852205,MacDougal St & Washington Sq,In Service,33
+253,40.73543934,-73.99453948,W 13 St & 5 Ave,In Service,55
+254,40.73532427,-73.99800419,W 11 St & 6 Ave,In Service,31
+257,40.71939226,-74.00247214,Lispenard St & Broadway,In Service,39
+258,40.68940747,-73.96885458,DeKalb Ave & Vanderbilt Ave,In Service,23
+259,40.70122128,-74.01234218,South St & Whitehall St,In Service,39
+260,40.70365182,-74.01167797,Broad St & Bridge St,In Service,35
+261,40.69474881,-73.98362464,Johnson St & Gold St,In Service,27
+262,40.6917823,-73.9737299,Washington Park,In Service,24
+264,40.70706456,-74.00731853,Maiden Ln & Pearl St,In Service,27
+265,40.72229346,-73.99147535,Stanton St & Chrystie St,In Service,35
+266,40.72368361,-73.97574813,Avenue D & E 8 St,In Service,24
+267,40.75097711,-73.98765428,Broadway & W 36 St,In Service,57
+268,40.71910537,-73.99973337,Howard St & Centre St,In Service,27
+270,40.69308257,-73.97178913,Adelphi St & Myrtle Ave,In Service,23
+274,40.68691865,-73.976682,Lafayette Ave & Fort Greene Pl,In Service,31
+275,40.68650065,-73.96563307,Washington Ave & Greene Ave,In Service,19
+276,40.71748752,-74.0104554,Duane St & Greenwich St,In Service,25
+278,40.69766564,-73.98476437,Concord St & Bridge St,In Service,19
+279,40.707873,-74.00167,Peck Slip & Front St,In Service,36
+280,40.73331967,-73.99510132,E 10 St & 5 Ave,In Service,31
+281,40.7643971,-73.97371465,Grand Army Plaza & Central Park S,In Service,59
+282,40.707644944175705,-73.96841526031494,Kent Ave & S 11 St,In Service,27
+284,40.7390169121,-74.0026376103,Greenwich Ave & 8 Ave,In Service,43
+285,40.73454567,-73.99074142,Broadway & E 14 St,Not In Service,0
+289,40.6845683,-73.95881081,Monroe St & Classon Ave,In Service,19
+291,40.713126,-73.984844,Madison St & Montgomery St,In Service,20
+293,40.73020660529954,-73.99102628231049,Lafayette St & E 8 St,In Service,55
+295,40.71406667,-73.99293911,Pike St & E Broadway,In Service,24
+296,40.71413089,-73.9970468,Division St & Bowery,In Service,35
+297,40.734232,-73.986923,E 15 St & 3 Ave,In Service,27
+301,40.72217444,-73.98368779,E 2 St & Avenue B,In Service,37
+302,40.72082834,-73.97793172,Avenue D & E 3 St,In Service,23
+303,40.72362738,-73.99949601,Mercer St & Spring St,In Service,31
+304,40.70463334,-74.01361706,Broadway & Battery Pl,In Service,34
+305,40.76095756,-73.96724467,E 58 St & 3 Ave,In Service,33
+306,40.70823502,-74.00530063,Cliff St & Fulton St,In Service,37
+307,40.71427487,-73.98990025,Canal St & Rutgers St,In Service,29
+308,40.71307916,-73.99851193,St James Pl & Oliver St,In Service,27
+309,40.7149787,-74.013012,Murray St & West St,In Service,41
+310,40.68926942,-73.98912867,State St & Smith St,In Service,36
+311,40.7172274,-73.98802084,Norfolk St & Broome St,In Service,31
+312,40.722055,-73.989111,Allen St & Stanton St,In Service,31
+313,40.69610226,-73.96751037,Washington Ave & Park Ave,In Service,23
+314,40.69383,-73.990539,Cadman Plaza West & Montague St,In Service,39
+315,40.70355377,-74.00670227,South St & Gouverneur Ln,In Service,29
+316,40.70955958,-74.00653609,Fulton St & William St,In Service,43
+317,40.72453734,-73.98185424,E 6 St & Avenue B,In Service,27
+319,40.711066,-74.009447,Fulton St & Broadway,In Service,33
+320,40.717571,-74.005549,Leonard St & Church St,In Service,39
+321,40.69991755,-73.98971773,Cadman Plaza E & Red Cross Pl,In Service,27
+322,40.696192,-73.991218,Clinton St & Tillary St,Not In Service,3
+323,40.69236178,-73.98631746,Lawrence St & Willoughby St,In Service,39
+324,40.689888,-73.981013,DeKalb Ave & Hudson Ave,In Service,51
+325,40.73624527,-73.98473765,E 19 St & 3 Ave,In Service,35
+326,40.72953837,-73.98426726,E 11 St & 1 Ave,In Service,27
+327,40.7153379,-74.01658354,Vesey Pl & River Terrace,In Service,39
+328,40.72405549,-74.00965965,Watts St & Greenwich St,In Service,23
+330,40.71450451,-74.00562789,Reade St & Broadway,In Service,39
+331,40.71173107,-73.99193043,Pike St & Monroe St,In Service,27
+332,40.71219906,-73.97948148,Cherry St,In Service,24
+334,40.74238787,-73.99726235,W 20 St & 7 Ave,In Service,31
+335,40.72903917,-73.99404649,Washington Pl & Broadway,In Service,27
+336,40.73047747,-73.99906065,Sullivan St & Washington Sq,In Service,36
+337,40.7037992,-74.00838676,Old Slip & Front St,In Service,37
+339,40.72580614,-73.97422494,Avenue D & E 12 St,In Service,24
+340,40.71269042,-73.98776323,Madison St & Clinton St,In Service,27
+341,40.71782143,-73.97628939,Stanton St & Mangin St,In Service,19
+342,40.71739973,-73.98016555,Columbia St & Rivington St,In Service,29
+343,40.69794,-73.96986848,Clinton Ave & Flushing Ave,In Service,23
+344,40.6851443,-73.95380904,Monroe St & Bedford Ave,In Service,23
+345,40.73649403,-73.99704374,W 13 St & 6 Ave,In Service,35
+346,40.73652889,-74.00618026,Bank St & Hudson St,In Service,27
+347,40.728846,-74.008591,Greenwich St & W Houston St,In Service,35
+348,40.72490985,-74.00154702,W Broadway & Spring St,In Service,42
+349,40.71850211,-73.98329859,Rivington St & Ridge St,In Service,23
+350,40.71559509,-73.9870295,Clinton St & Grand St,In Service,28
+351,40.70530954,-74.00612572,Front St & Maiden Ln,In Service,39
+352,40.76340613,-73.97722479,W 56 St & 6 Ave,Not In Service,4
+353,40.68539567,-73.97431458,S Portland Ave & Hanson Pl,In Service,27
+354,40.69363137,-73.96223558,Emerson Pl & Myrtle Ave,In Service,23
+355,40.71602118,-73.99974372,Bayard St & Baxter St,In Service,43
+356,40.71622644,-73.98261206,Bialystoker Pl & Delancey St,In Service,23
+357,40.73261787,-73.99158043,E 11 St & Broadway,In Service,27
+358,40.73291553,-74.00711384,Christopher St & Greenwich St,In Service,36
+359,40.75510267,-73.97498696,E 47 St & Park Ave,In Service,55
+360,40.70717936,-74.00887308,William St & Pine St,In Service,39
+361,40.71605866,-73.99190759,Allen St & Hester St,In Service,43
+362,40.75172632,-73.98753523,Broadway & W 37 St,In Service,57
+363,40.70834698,-74.01713445,West Thames St,In Service,49
+364,40.68900443,-73.96023854,Lafayette Ave & Classon Ave,In Service,27
+365,40.68223166,-73.9614583,Fulton St & Grand Ave,In Service,31
+366,40.693261,-73.968896,Clinton Ave & Myrtle Ave,In Service,33
+368,40.73038599,-74.00214988,Carmine St & 6 Ave,In Service,39
+369,40.73224119,-74.00026394,Washington Pl & 6 Ave,In Service,35
+372,40.694528,-73.958089,Franklin Ave & Myrtle Ave,In Service,27
+373,40.69331716,-73.95381995,Willoughby Ave & Walworth St,In Service,19
+376,40.70862144,-74.00722156,John St & William St,In Service,43
+377,40.72243797,-74.00566443,6 Ave & Canal St,In Service,47
+379,40.749156,-73.9916,W 31 St & 7 Ave,In Service,42
+380,40.73401143,-74.00293877,W 4 St & 7 Ave S,In Service,39
+382,40.73492695,-73.99200509,University Pl & E 14 St,In Service,36
+383,40.735238,-74.000271,Greenwich Ave & Charles St,In Service,39
+384,40.683048,-73.964915,Fulton St & Washington Ave,In Service,31
+385,40.75797322,-73.96603308,E 55 St & 2 Ave,In Service,29
+386,40.71494807,-74.00234482,Centre St & Worth St,In Service,43
+387,40.71273266,-74.0046073,Centre St & Chambers St,In Service,39
+388,40.749717753,-74.002950346,W 26 St & 10 Ave,In Service,35
+389,40.71044554,-73.96525063,Broadway & Berry St,In Service,27
+390,40.69221589,-73.9842844,Duffield St & Willoughby St,In Service,31
+391,40.69760127,-73.99344559,Clark St & Henry St,In Service,31
+392,40.695065,-73.987167,Jay St & Tech Pl,In Service,32
+393,40.72299208,-73.97995466,E 5 St & Avenue C,In Service,31
+394,40.72521311,-73.97768752,E 9 St & Avenue C,In Service,32
+395,40.68807003,-73.98410637,Bond St & Schermerhorn St,In Service,30
+396,40.680342423,-73.9557689392,Lefferts Pl & Franklin Ave,In Service,25
+397,40.68415748,-73.96922273,Fulton St & Clermont Ave,In Service,27
+398,40.69165183,-73.9999786,Atlantic Ave & Furman St,In Service,31
+399,40.68851534,-73.9647628,Lafayette Ave & St James Pl,In Service,27
+400,40.71926081,-73.98178024,Pitt St & Stanton St,In Service,15
+401,40.72019576,-73.98997825,Allen St & Rivington St,In Service,42
+402,40.7403432,-73.98955109,Broadway & E 22 St,In Service,40
+403,40.72502876,-73.99069656,E 2 St & 2 Ave,In Service,31
+405,40.739323,-74.008119,Washington St & Gansevoort St,Not In Service,3
+406,40.69512845,-73.99595065,Hicks St & Montague St,In Service,34
+407,40.700469,-73.991454,Henry St & Poplar St,In Service,37
+408,40.71076228,-73.99400398,Market St & Cherry St,In Service,23
+409,40.6906495,-73.95643107,DeKalb Ave & Skillman St,In Service,19
+410,40.72066442,-73.98517977,Suffolk St & Stanton St,In Service,35
+411,40.72228087,-73.97668709,E 6 St & Avenue D,In Service,23
+412,40.7158155,-73.99422366,Forsyth St & Canal St,In Service,29
+414,40.70281858,-73.98765762,Pearl St & Anchorage Pl,In Service,24
+415,40.7047177,-74.00926027,Pearl St & Hanover Square,In Service,42
+416,40.68753406,-73.97265183,Cumberland St & Lafayette Ave,In Service,31
+417,40.71291224,-74.01020234,Barclay St & Church St,In Service,23
+418,40.70224,-73.982578,Front St & Gold St,In Service,23
+419,40.69580705,-73.97355569,Carlton Ave & Park Ave,In Service,23
+420,40.68764484,-73.96968902,Clermont Ave & Lafayette Ave,In Service,23
+421,40.69573398,-73.97129668,Clermont Ave & Park Ave,In Service,19
+422,40.770513,-73.988038,W 59 St & 10 Ave,In Service,55
+423,40.76584941,-73.98690506,W 54 St & 9 Ave,In Service,39
+426,40.71754834,-74.01322069,West St & Chambers St,In Service,31
+427,40.701907,-74.013942,Bus Slip & State St,In Service,47
+428,40.72467721,-73.98783413,E 3 St & 1 Ave,In Service,31
+430,40.7014851,-73.98656928,York St & Jay St,In Service,27
+432,40.72621788,-73.98379855,E 7 St & Avenue A,In Service,31
+433,40.72955361,-73.98057249,E 13 St & Avenue A,In Service,39
+434,40.74317449,-74.00366443,9 Ave & W 18 St,In Service,27
+435,40.74173969,-73.99415556,W 21 St & 6 Ave,In Service,47
+436,40.68216564,-73.95399026,Hancock St & Bedford Ave,In Service,27
+437,40.6809833854,-73.9500479759,Macon St & Nostrand Ave,In Service,24
+438,40.72779126,-73.98564945,St Marks Pl & 1 Ave,In Service,27
+439,40.7262807,-73.98978041,E 4 St & 2 Ave,In Service,39
+440,40.75255434,-73.97282625,E 45 St & 3 Ave,In Service,32
+441,40.756014,-73.967416,E 52 St & 2 Ave,In Service,35
+442,40.746647,-73.993915,W 27 St & 7 Ave,In Service,51
+443,40.70853074,-73.96408963,Bedford Ave & S 9 St,In Service,23
+444,40.7423543,-73.98915076,Broadway & W 24 St,In Service,52
+445,40.72740794,-73.98142006,E 10 St & Avenue A,In Service,42
+446,40.74487634,-73.99529885,W 24 St & 7 Ave,In Service,39
+447,40.76370739,-73.9851615,8 Ave & W 52 St,In Service,31
+448,40.75660359,-73.9979009,W 37 St & 10 Ave,In Service,31
+449,40.76461837,-73.98789473,W 52 St & 9 Ave,In Service,31
+450,40.76227205,-73.98788205,W 49 St & 8 Ave,In Service,59
+453,40.74475148,-73.99915362,W 22 St & 8 Ave,In Service,39
+454,40.75455731,-73.96592976,E 51 St & 1 Ave,In Service,35
+455,40.75001986,-73.96905301,1 Ave & E 44 St,In Service,39
+456,40.7597108,-73.97402311,E 53 St & Madison Ave,In Service,35
+457,40.76695317,-73.98169333,Broadway & W 58 St,In Service,39
+458,40.751396,-74.005226,11 Ave & W 27 St,In Service,31
+459,40.746745,-74.007756,W 20 St & 11 Ave,In Service,49
+460,40.71285887,-73.96590294,S 4 St & Wythe Ave,In Service,23
+461,40.73587678,-73.98205027,E 20 St & 2 Ave,In Service,39
+462,40.74691959,-74.00451887,W 22 St & 10 Ave,In Service,47
+465,40.75513557,-73.98658032,Broadway & W 41 St,In Service,39
+466,40.74395411,-73.99144871,W 25 St & 6 Ave,In Service,35
+467,40.68312489,-73.97895137,Dean St & 4 Ave,In Service,34
+468,40.7652654,-73.98192338,Broadway & W 55 St,In Service,59
+469,40.76344058,-73.98268129,Broadway & W 53 St,In Service,57
+470,40.74345335,-74.00004031,W 20 St & 8 Ave,In Service,37
+471,40.71286844,-73.95698119,Grand St & Havemeyer St,In Service,31
+472,40.7457121,-73.98194829,E 32 St & Park Ave,In Service,41
+473,40.72110063,-73.9919254,Rivington St & Chrystie St,In Service,38
+474,40.7451677,-73.98683077,5 Ave & E 29 St,In Service,39
+475,40.73524276,-73.98758561,E 16 St & Irving Pl (1),Not In Service,2
+476,40.74394314,-73.97966069,E 31 St & 3 Ave,In Service,47
+477,40.75640548,-73.9900262,W 41 St & 8 Ave,In Service,59
+478,40.76030096,-73.99884222,11 Ave & W 41 St,In Service,31
+479,40.76019252,-73.9912551,9 Ave & W 45 St,In Service,31
+480,40.76669671,-73.99061728,W 53 St & 10 Ave,In Service,27
+481,40.71260486,-73.96264403,S 3 St & Bedford Ave,In Service,25
+482,40.73935542,-73.99931783,W 15 St & 7 Ave,In Service,39
+483,40.73223272,-73.98889957,E 12 St & 3 Ave,In Service,35
+484,40.75500254,-73.98014437,W 44 St & 5 Ave,In Service,44
+485,40.75038009,-73.98338988,W 37 St & 5 Ave,In Service,39
+486,40.7462009,-73.98855723,Broadway & W 29 St,In Service,39
+487,40.73314259,-73.97573881,E 20 St & FDR Drive,In Service,36
+488,40.75645824,-73.99372222,W 39 St & 9 Ave,In Service,41
+490,40.751551,-73.993934,8 Ave & W 33 St,In Service,59
+491,40.74096374,-73.98602213,E 24 St & Park Ave S,In Service,53
+492,40.75019995,-73.99093085,W 33 St & 7 Ave,In Service,49
+493,40.7568001,-73.98291153,W 45 St & 6 Ave,Not In Service,3
+494,40.74734825,-73.99723551,W 26 St & 8 Ave,In Service,35
+495,40.76269882,-73.99301222,W 47 St & 10 Ave,In Service,25
+496,40.73726186,-73.99238967,E 16 St & 5 Ave,In Service,47
+497,40.73704984,-73.99009296,E 17 St & Broadway,In Service,59
+498,40.74854862,-73.98808416,Broadway & W 32 St,In Service,30
+499,40.76915505,-73.98191841,Broadway & W 60 St,In Service,36
+500,40.76228826,-73.98336183,Broadway & W 51 St,In Service,51
+501,40.744219,-73.97121214,FDR Drive & E 35 St,In Service,43
+502,40.714215,-73.981346,Henry St & Grand St,In Service,30
+503,40.73827428,-73.98751968,E 20 St & Park Ave,In Service,29
+504,40.73221853,-73.98165557,1 Ave & E 16 St,In Service,45
+505,40.74901271,-73.98848395,6 Ave & W 33 St,In Service,36
+507,40.73912601,-73.97973776,E 25 St & 2 Ave,In Service,47
+508,40.76341379,-73.99667444,W 46 St & 11 Ave,In Service,24
+509,40.7454973,-74.00197139,9 Ave & W 22 St,In Service,36
+511,40.72938685,-73.97772429,E 14 St & Avenue B,In Service,33
+513,40.768254,-73.988639,W 56 St & 10 Ave,Not In Service,0
+514,40.76087502,-74.00277668,12 Ave & W 40 St,In Service,53
+515,40.76009437,-73.99461843,W 43 St & 10 Ave,In Service,35
+516,40.75206862,-73.96784384,E 47 St & 1 Ave,In Service,31
+517,40.751581,-73.97791,Pershing Square South,In Service,59
+518,40.74780373,-73.9734419,E 39 St & 2 Ave,In Service,39
+519,40.751873,-73.977706,Pershing Square North,In Service,61
+520,40.75992262,-73.97648516,W 52 St & 5 Ave,In Service,39
+522,40.75714758,-73.97207836,E 51 St & Lexington Ave,In Service,51
+523,40.75466591,-73.99138152,W 38 St & 8 Ave,In Service,51
+524,40.75527307,-73.98316936,W 43 St & 6 Ave,In Service,57
+525,40.75594159,-74.0021163,W 34 St & 11 Ave,In Service,39
+526,40.74765947,-73.98490707,E 33 St & 5 Ave,In Service,39
+527,40.744023,-73.976056,E 33 St & 2 Ave,In Service,59
+528,40.74290902,-73.97706058,2 Ave & E 31 St,In Service,39
+529,40.7575699,-73.99098507,W 42 St & 8 Ave,In Service,41
+530,40.771522,-73.990541,11 Ave & W 59 St,In Service,36
+531,40.71893904,-73.99266288,Forsyth St & Broome St,In Service,39
+532,40.710451,-73.960876,S 5 Pl & S 4 St,In Service,43
+533,40.75299641,-73.98721619,Broadway & W 39 St,In Service,50
+534,40.70255065,-74.0127234,Water - Whitehall Plaza,In Service,31
+536,40.74144387,-73.97536082,1 Ave & E 30 St,In Service,29
+537,40.74025878,-73.98409214,Lexington Ave & E 24 St,In Service,39
+539,40.71534825,-73.96024116,Metropolitan Ave & Bedford Ave,In Service,31
+540,40.74311555376486,-73.98215353488922,Lexington Ave & E 29 St,In Service,30
+545,40.736502,-73.97809472,E 23 St & 1 Ave,In Service,27
+546,40.74444921,-73.98303529,E 30 St & Park Ave S,In Service,38
+2000,40.70255088,-73.98940236,Front St & Washington St,In Service,21
+2001,40.699773,-73.979927,Sands St & Navy St,In Service,15
+2002,40.716887,-73.963198,Wythe Ave & Metropolitan Ave,In Service,27
+2003,40.733812191966315,-73.98054420948029,1 Ave & E 18 St,In Service,39
+2004,40.724399,-74.004704,6 Ave & Broome St,Not In Service,12
+2005,40.70531194,-73.97100056,Railroad Ave & Kay Ave,In Service,12
+2006,40.76590936,-73.97634151,Central Park S & 6 Ave,In Service,49
+2008,40.70569254,-74.01677685,Little West St & 1 Pl,In Service,24
+2009,40.71117444,-73.99682619,Catherine St & Monroe St,In Service,35
+2010,40.72165481,-74.00234737,Grand St & Greene St,In Service,39
+2012,40.739445,-73.976806,E 27 St & 1 Ave,In Service,36
+2021,40.75929124,-73.98859651,W 45 St & 8 Ave,In Service,43
+2022,40.759107,-73.959223,E 60 St & York Ave,In Service,33
+2023,40.75968085,-73.97031366,E 55 St & Lexington Ave,In Service,36
+3002,40.711512,-74.015756,South End Ave & Liberty St,In Service,25
+3016,40.72036775298455,-73.96165072917938,Kent Ave & N 7 St,In Service,47
+3041,40.67890679,-73.94142771,Kingston Ave & Herkimer St,In Service,24
+3042,40.6794268,-73.9298911,Fulton St & Utica Ave,In Service,19
+3043,40.6814598,-73.934903,Lewis Ave & Decatur St,In Service,19
+3044,40.6800105,-73.938475,Albany Ave & Fulton St,In Service,27
+3046,40.682601,-73.938037,Marcus Garvey Blvd & Macon St,In Service,19
+3047,40.6823687,-73.944118,Halsey St & Tompkins Ave,In Service,21
+3048,40.68402,-73.94977,Putnam Ave & Nostrand Ave,In Service,19
+3049,40.68488,-73.96304,Cambridge Pl & Gates Ave,In Service,18
+3050,40.6851532,-73.94111,Putnam Ave & Throop Ave,In Service,21
+3052,40.686312,-73.935775,Lewis Ave & Madison St,In Service,23
+3053,40.6900815,-73.947915,Marcy Ave & Lafayette Ave,In Service,23
+3054,40.6894932,-73.942061,Greene Ave & Throop Ave,In Service,19
+3055,40.6883337,-73.950916,Greene Ave & Nostrand Ave,In Service,23
+3056,40.69072549,-73.95133465,Kosciuszko St & Nostrand Ave,In Service,23
+3057,40.69128258,-73.9452416,Kosciuszko St & Tompkins Ave,In Service,18
+3058,40.69237074,-73.93705428,Lewis Ave & Kosciuszko St,In Service,24
+3059,40.6933982,-73.939877,Pulaski St & Marcus Garvey Blvd,In Service,19
+3060,40.69425403,-73.94626915,Willoughby Ave & Tompkins Ave,In Service,19
+3061,40.69622937,-73.94371094,Throop Ave & Myrtle Ave,In Service,21
+3062,40.69539817,-73.94954908,Myrtle Ave & Marcy Ave,In Service,23
+3063,40.69527008,-73.95238108,Nostrand Ave & Myrtle Ave,In Service,20
+3064,40.69681963,-73.93756926,Myrtle Ave & Lewis Ave,In Service,23
+3065,40.70029511,-73.95032283,Union Ave & Wallabout St,In Service,27
+3066,40.69957608,-73.94708417,Tompkins Ave & Hopkins St,In Service,19
+3067,40.7016657,-73.9437303,Broadway & Whipple St,In Service,27
+3068,40.7031724,-73.940636,Humboldt St & Varet St,In Service,24
+3069,40.70411791,-73.94818595,Lorimer St & Broadway,In Service,25
+3070,40.70510918,-73.94407279,McKibbin St & Manhattan Ave,In Service,23
+3071,40.70538077,-73.94976519,Boerum St & Broadway,In Service,19
+3072,40.70583339,-73.94644578,Leonard St & Boerum St,In Service,24
+3073,40.70691254,-73.95441667,Division Ave & Hooper St,In Service,27
+3074,40.70767788,-73.94016171,Montrose Ave & Bushwick Ave,In Service,31
+3075,40.70708701,-73.95796783,Division Ave & Marcy Ave,In Service,33
+3076,40.70870368,-73.9448625,Scholes St & Manhattan Ave,In Service,24
+3077,40.70877084,-73.95095259,Stagg St & Union Ave,In Service,33
+3078,40.70925562,-73.95982218,Broadway & Roebling St,In Service,27
+3080,40.70934,-73.95608,S 4 St & Rodney St,In Service,21
+3081,40.711863,-73.944024,Graham Ave & Grand St,In Service,23
+3082,40.71167351,-73.95141312,Hope St & Union Ave,In Service,25
+3083,40.71247661,-73.94100005,Bushwick Ave & Powers St,In Service,30
+3085,40.71469,-73.95739,Roebling St & N 4 St,In Service,25
+3086,40.715143,-73.944507,Graham Ave & Conselyea St,In Service,25
+3087,40.71413311,-73.95234386,Metropolitan Ave & Meeker Ave,In Service,30
+3088,40.7160751,-73.952029,Union Ave & Jackson St,In Service,19
+3090,40.71774592,-73.95600096,N 8 St & Driggs Ave,In Service,31
+3091,40.71764,-73.94882,Frost St & Meeker St,In Service,31
+3092,40.7190095,-73.95852515,Berry St & N 8 St,In Service,27
+3093,40.71745169,-73.95850939,N 6 St & Bedford Ave,In Service,28
+3094,40.7169811,-73.94485918,Graham Ave & Withers St,In Service,18
+3095,40.71929301,-73.94500379,Graham Ave & Herbert St,In Service,23
+3096,40.71924,-73.95242,Union Ave & N 12 St,In Service,39
+3100,40.724812564400175,-73.94752621650696,Nassau Ave & Newell St,In Service,39
+3101,40.72079821,-73.95484712,N 12 St & Bedford Ave,In Service,27
+3102,40.72179134,-73.9504154,Driggs Ave & Lorimer St,In Service,27
+3103,40.72153267,-73.95782357,N 11 St & Wythe Ave,In Service,27
+3105,40.724055,-73.955736,N 15 St & Wythe Ave,In Service,24
+3106,40.72325,-73.94308,Driggs Ave & N Henry St,In Service,19
+3107,40.72311651,-73.95212324,Bedford Ave & Nassau Ave,In Service,39
+3108,40.72557,-73.94434,Nassau Ave & Russell St,In Service,24
+3109,40.72606,-73.95621,Banker St & Meserole Ave,In Service,31
+3110,40.72708584,-73.95299117,Meserole Ave & Manhattan Ave,In Service,27
+3111,40.7258483,-73.95064893,Norman Ave & Leonard St,In Service,25
+3112,40.72906,-73.95779,Milton St & Franklin St,In Service,33
+3113,40.73026,-73.95394,Greenpoint Ave & Manhattan Ave,In Service,27
+3114,40.73165141,-73.96161892,India St & East River,Not In Service,23
+3115,40.73232194,-73.9550858,India St & Manhattan Ave,In Service,34
+3116,40.73266,-73.95826,Huron St & Franklin St,In Service,35
+3117,40.73564,-73.95866,Franklin St & Dupont St,In Service,27
+3118,40.73555,-73.95284,McGuinness Blvd & Eagle St,In Service,30
+3119,40.74232744,-73.95411749,Vernon Blvd & 50 Ave,In Service,45
+3120,40.74161,-73.96044,Center Blvd & Borden Ave,In Service,20
+3121,40.74524768,-73.94733276,Jackson Ave & 46 Rd,In Service,27
+3122,40.744363287066875,-73.9558732509613,48 Ave & 5 St,In Service,31
+3123,40.74469738,-73.93540375,31 St & Thomson Ave,In Service,27
+3124,40.74731,-73.95451,46 Ave & 5 St,In Service,27
+3125,40.74708586,-73.94977234,45 Rd & 11 St,In Service,23
+3126,40.74718234,-73.9432635,44 Dr & Jackson Ave,In Service,34
+3127,40.74966,-73.9521,9 St & 44 Rd,In Service,35
+3128,40.75052534,-73.94594845,21 St & 43 Ave,In Service,23
+3129,40.75110165,-73.94073717,Queens Plaza North & Crescent St,In Service,31
+3130,40.75325964,-73.94335788,21 St & Queens Plaza North,In Service,31
+3131,40.76712840349542,-73.96224617958069,E 68 St & 3 Ave,In Service,30
+3132,40.76350532,-73.97109243,E 59 St & Madison Ave,Not In Service,29
+3134,40.76312584,-73.96526895,3 Ave & E 62 St,In Service,51
+3135,40.77112927,-73.95772297,E 75 St & 3 Ave,In Service,41
+3136,40.766368,-73.971518,5 Ave & E 63 St,In Service,47
+3137,40.77282817,-73.96685276,5 Ave & E 73 St,In Service,31
+3139,40.77118287540658,-73.96409422159195,E 72 St & Park Ave,In Service,43
+3140,40.77140426,-73.9535166,1 Ave & E 78 St,In Service,55
+3141,40.76500525,-73.95818491,1 Ave & E 68 St,In Service,59
+3142,40.7612274,-73.96094022,1 Ave & E 62 St,In Service,40
+3143,40.77682863439968,-73.96388769149779,5 Ave & E 78 St,In Service,47
+3144,40.77677702,-73.9590097,E 81 St & Park Ave,In Service,46
+3145,40.77862688,-73.95772073,E 84 St & Park Ave,Not In Service,45
+3146,40.77573034,-73.9567526,E 81 St & 3 Ave,In Service,47
+3147,40.77801203,-73.95407149,E 85 St & 3 Ave,In Service,39
+3148,40.77565541,-73.95068615,E 84 St & 1 Ave,In Service,27
+3150,40.77536905,-73.94803392,E 85 St & York Ave,In Service,47
+3151,40.7728384,-73.94989233,E 81 St & York Ave,In Service,43
+3152,40.76873687,-73.96119945,3 Ave & E 71 St,In Service,27
+3155,40.76440023,-73.96648977,Lexington Ave & E 63 St,In Service,39
+3156,40.76663814,-73.95348296,E 72 St & York Ave,In Service,39
+3157,40.77518615,-73.94446054,East End Ave & E 86 St,In Service,27
+3158,40.77163851,-73.98261428,W 63 St & Broadway,In Service,31
+3159,40.77492513,-73.98266566,W 67 St & Broadway,In Service,31
+3160,40.77896784,-73.97374737,Central Park West & W 76 St,In Service,31
+3161,40.7801839724239,-73.97728532552719,W 76 St & Columbus Ave,In Service,59
+3162,40.78339981,-73.98093133,W 78 St & Broadway,In Service,39
+3163,40.7734066,-73.97782542,Central Park West & W 68 St,In Service,43
+3164,40.7770575,-73.97898475,Columbus Ave & W 72 St,In Service,67
+3165,40.77579376683666,-73.9762057363987,Central Park West & W 72 St,In Service,51
+3166,40.78057799010334,-73.98562431335449,Riverside Dr & W 72 St,In Service,41
+3167,40.77966809007312,-73.98093044757842,Amsterdam Ave & W 73 St,In Service,55
+3168,40.78472675,-73.96961715,Central Park West & W 85 St,In Service,31
+3169,40.78720869,-73.98128127,Riverside Dr & W 82 St,In Service,39
+3170,40.78499979,-73.97283406,W 84 St & Columbus Ave,In Service,35
+3171,40.78524672,-73.97667321,Amsterdam Ave & W 82 St,In Service,39
+3172,40.7785669,-73.97754961,W 74 St & Columbus Ave,In Service,27
+3173,40.777507027547976,-73.98888587951659,Riverside Blvd & W 67 St,In Service,39
+3175,40.77748046,-73.98288594,W 70 St & Amsterdam Ave,In Service,31
+3176,40.77452835,-73.98753759,W 64 St & West End Ave,In Service,43
+3177,40.7867947,-73.977112,W 84 St & Broadway,In Service,63
+3178,40.78414472,-73.98362492,Riverside Dr & W 78 St,In Service,39
+3179,40.698617,-73.941342,Park Ave & Marcus Garvey Blvd,In Service,23
+3180,40.69878,-73.99712,Brooklyn Bridge Park - Pier 2,In Service,31
+3183,40.7162469,-74.0334588,Exchange Place,In Service,30
+3184,40.7141454,-74.0335519,Paulus Hook,In Service,14
+3185,40.7177325,-74.043845,City Hall,In Service,22
+3186,40.71958611647166,-74.04311746358871,Grove St PATH,In Service,42
+3187,40.7211236,-74.03805095,Warren St,In Service,22
+3188,40.7101087,-74.0858489,NJCU,In Service,18
+3189,40.714402,-74.0887723,West Side Light Rail,In Service,14
+3190,40.7104670233797,-74.07003879547119,Garfield Ave Station,In Service,14
+3191,40.7182113,-74.0836394,Union St,In Service,18
+3192,40.7112423,-74.0557013,Liberty Light Rail,In Service,22
+3193,40.7246050998869,-74.07840594649315,Lincoln Park,In Service,18
+3194,40.7253399253558,-74.06762212514877,McGinley Square,In Service,22
+3195,40.73074262530658,-74.06378388404846,Sip Ave,In Service,37
+3196,40.7443187,-74.0439909,Riverview Park,In Service,18
+3197,40.752559,-74.044725,North St,In Service,18
+3198,40.748715945380226,-74.04044330120087,Heights Elevator,In Service,18
+3199,40.7287448,-74.0321082,Newport Pkwy,In Service,14
+3200,40.7111305,-74.0788855,MLK Light Rail,In Service,18
+3201,40.737711,-74.066921,Dey St,In Service,18
+3202,40.7272235,-74.0337589,Newport PATH,In Service,18
+3203,40.727595966,-74.044247311,Hamilton Park,In Service,26
+3205,40.71653978099194,-74.0496379137039,JC Medical Center,In Service,22
+3206,40.7311689,-74.0575736,Hilltop,In Service,26
+3207,40.7376037,-74.0524783,Oakland Ave,In Service,26
+3209,40.7241765,-74.0506564,Brunswick St,In Service,21
+3210,40.742677141,-74.051788633,Pershing Field,In Service,18
+3211,40.72152515,-74.046304543,Newark Ave,In Service,22
+3212,40.734785818,-74.050443636,Christ Hospital,In Service,22
+3213,40.71848892,-74.047726625,Van Vorst Park,In Service,21
+3214,40.7127742,-74.0364857,Essex Light Rail,In Service,22
+3215,40.7467299,-74.0492509,Central Ave,In Service,18
+3216,40.6970299,-74.0969366,Columbia Park,In Service,18
+3217,40.698650544,-74.082079678,Bayside Park,In Service,18
+3220,40.734961020009514,-74.0595030784607,5 Corners Library,In Service,18
+3221,40.743,-73.93561,47 Ave & 31 St,In Service,27
+3223,40.758996559605116,-73.96865397691727,E 55 St & 3 Ave,In Service,55
+3224,40.73997354103409,-74.00513872504234,W 13 St & Hudson St,In Service,39
+3225,40.7236589,-74.0641943,Baldwin at Montgomery,In Service,14
+3226,40.78275,-73.97137,W 82 St & Central Park West,In Service,45
+3231,40.76780080148132,-73.96592080593109,E 67 St & Park Ave,In Service,39
+3232,40.68962188790333,-73.98304268717766,Bond St & Fulton St,In Service,31
+3233,40.75724567911726,-73.97805914282799,E 48 St & 5 Ave,In Service,39
+3235,40.752165280621966,-73.97992193698882,E 41 St & Madison Ave,In Service,31
+3236,40.75898481399634,-73.99379968643188,W 42 St & Dyer Ave,In Service,33
+3238,40.77391390238118,-73.9543953537941,E 80 St & 2 Ave,In Service,37
+3241,40.686203,-73.944694,Monroe St & Tompkins Ave,In Service,19
+3242,40.69102925677968,-73.99183362722397,Schermerhorn St & Court St,In Service,39
+3243,40.75892386377695,-73.96226227283478,E 58 St & 1 Ave,In Service,29
+3244,40.73143724085228,-73.99490341544151,University Pl & E 8 St,In Service,31
+3249,40.6803560840434,-73.9476791024208,Verona Pl & Fulton St,In Service,19
+3255,40.7505853470215,-73.9946848154068,8 Ave & W 31 St,In Service,19
+3256,40.7277140777778,-74.01129573583603,Pier 40 - Hudson River Park,In Service,22
+3258,40.75018156325683,-74.00218427181244,W 27 St & 10 Ave,In Service,37
+3259,40.74937024193277,-73.99923384189606,9 Ave & W 28 St,In Service,27
+3260,40.72706363348306,-73.99662137031554,Mercer St & Bleecker St,In Service,31
+3263,40.72923649910006,-73.99086803197861,Cooper Square & E 7 St,In Service,59
+3267,40.7124188237569,-74.03852552175522,Morris Canal,In Service,14
+3268,40.71346382669195,-74.06285852193832,Lafayette Park,In Service,14
+3269,40.72601172964625,-74.05038893222809,Brunswick & 6th,In Service,14
+3270,40.72528910781132,-74.04557168483734,Jersey & 6th St,In Service,14
+3271,40.69263996618329,-74.08801227807997,Danforth Light Rail,In Service,11
+3272,40.72333158646436,-74.04595255851744,Jersey & 3rd,In Service,14
+3273,40.721650724879986,-74.04288411140442,Manila & 1st,In Service,18
+3274,40.704957516728605,-74.08593088388443,Bethune Center,In Service,14
+3275,40.71835519823214,-74.03891444206238,Columbus Drive,In Service,14
+3276,40.71458403535893,-74.04281705617905,Marin Light Rail,In Service,26
+3277,40.71435836870427,-74.06661093235016,Communipaw & Berry Lane,In Service,14
+3278,40.72568548362901,-74.04879033565521,Monmouth and 6th,In Service,14
+3279,40.721630142638354,-74.04996782541275,Dixon Mills,In Service,18
+3280,40.71928220070702,-74.07126188278198,Astor Place,In Service,14
+3281,40.74590996631558,-74.0572714805603,Leonard Gordon Park,In Service,14
+3282,40.78307,-73.95939,5 Ave & E 88 St,In Service,38
+3283,40.7882213,-73.97041561,W 89 St & Columbus Ave,In Service,47
+3284,40.781410700190015,-73.95595908164978,E 88 St & Park Ave,In Service,41
+3285,40.78839,-73.9747,W 87 St  & Amsterdam Ave,In Service,43
+3286,40.7806284,-73.9521667,E 89 St & 3 Ave,In Service,39
+3288,40.778301,-73.9488134,E 88 St & 1 Ave,In Service,39
+3289,40.79017948095081,-73.97288918495178,W 90 St & Amsterdam Ave,In Service,31
+3290,40.7779453,-73.946041,E 89 St & York Ave,In Service,35
+3292,40.7857851,-73.957481,5 Ave & E 93 St,In Service,43
+3293,40.7921,-73.9739,W 92 St & Broadway,In Service,24
+3294,40.7835016,-73.955327,E 91 St & Park Ave,In Service,35
+3295,40.79127,-73.964839,Central Park W & W 96 St,In Service,59
+3296,40.782454175279874,-73.9489196240902,Coming Soon: E 93 St & 2 Ave,Not In Service,0
+3297,40.6686627,-73.97988067,6 St & 7 Ave,In Service,21
+3298,40.686371,-73.99383324,Warren St & Court St,In Service,23
+3299,40.78727853502096,-73.95010516047478,Coming Soon: E 98 St & Lexington Ave,Not In Service,0
+3300,40.66514681533792,-73.97637605667114,Prospect Park West & 8 St,In Service,25
+3301,40.7919557,-73.968087,Columbus Ave & W 95 St,In Service,39
+3302,40.7969347,-73.9643412291,Columbus Ave & W 103 St,In Service,23
+3303,40.6849894,-73.99440329,Butler St & Court St,In Service,25
+3304,40.668127,-73.98377641,6 Ave & 9 St,Not In Service,7
+3305,40.78112229934166,-73.94965589046478,E 91 St & 2 Ave,In Service,39
+3306,40.6662078,-73.98199886,10 St & 7 Ave,Not In Service,7
+3307,40.7941654,-73.974124,West End Ave & W 94 St,In Service,31
+3308,40.6861758,-73.99645295,Kane St & Clinton St,In Service,27
+3309,40.7859201,-73.94860294,E 97 St & 3 Ave,In Service,30
+3310,40.663779,-73.98396846,14 St & 7 Ave,In Service,24
+3311,40.68763155,-74.0016256,Columbia St & Kane St,In Service,21
+3312,40.7817212,-73.94594,1 Ave & E 94 St,In Service,39
+3313,40.6663181,-73.9854617,6 Ave & 12 St,Not In Service,7
+3314,40.7937704,-73.971888,W 95 St & Broadway,In Service,32
+3315,40.6847514,-73.99917254,Henry St & Degraw St,In Service,23
+3316,40.7989937,-73.9662173778,W 104 St & Amsterdam Ave,In Service,47
+3317,40.6686273,-73.98700053,10 St & 5 Ave,In Service,24
+3318,40.7839636,-73.9471673,2 Ave & E 96 St,In Service,39
+3319,40.666287,-73.98895053,14 St & 5 Ave,In Service,18
+3320,40.793393,-73.9635556,Central Park West & W 100 St,In Service,49
+3321,40.6831164,-73.99785267,Clinton St & Union St,In Service,25
+3322,40.668603,-73.9904394,12 St & 4 Ave,In Service,25
+3323,40.7981856,-73.9605909006,W 106 St & Central Park West,In Service,59
+3324,40.6685455,-73.99333264,3 Ave & 14 St,In Service,25
+3325,40.7849032,-73.950503,E 95 St & 3 Ave,In Service,31
+3326,40.67434,-74.00194698,Clinton St & Centre St,In Service,21
+3327,40.7877214,-73.94728331,3 Ave & E 100 St,In Service,27
+3328,40.795,-73.9645,W 100 St & Manhattan Ave,In Service,39
+3329,40.6829151,-73.99318208,Degraw St & Smith St,In Service,27
+3330,40.6725058,-74.00494695,Henry St & Bay St,In Service,19
+3331,40.8013434,-73.9711457439,Riverside Dr & W 104 St,In Service,39
+3332,40.681990442707026,-73.99079024791718,Degraw St & Hoyt St,In Service,19
+3333,40.6747055,-74.0075572,Columbia St & Lorraine St,In Service,21
+3335,40.6772744,-73.98282002,Union St & 4 Ave,In Service,28
+3336,40.787801,-73.953559,E 97 St & Madison Ave,In Service,41
+3337,40.67363551341504,-74.01195555925369,Dwight St & Van Dyke St,In Service,23
+3338,40.7862586,-73.94552579,2 Ave & E 99 St,In Service,31
+3339,40.6765304,-73.97846879,Berkeley Pl & 6 Ave,In Service,23
+3340,40.6753274,-74.0100698,Wolcott St & Dwight St,In Service,21
+3341,40.795346,-73.96186,Central Park West & W 102 St,In Service,41
+3342,40.6777748,-74.0094613,Pioneer St & Richards St,In Service,23
+3343,40.7997568,-73.9621128676,W 107 St & Columbus Ave,In Service,23
+3344,40.679043,-74.011169,Pioneer St & Van Brunt St,In Service,19
+3345,40.78948541553215,-73.95242929458618,Madison Ave & E 99 St,In Service,35
+3346,40.675146838709786,-73.97523209452629,Berkeley Pl & 7 Ave,In Service,29
+3347,40.6773429,-74.01275056,Van Brunt St & Wolcott St,In Service,21
+3348,40.677236,-74.015665,Coffey St & Conover St,In Service,19
+3349,40.6729679,-73.97087984,Grand Army Plaza & Plaza St West,In Service,30
+3350,40.7973721,-73.97041192,W 100 St & Broadway,In Service,39
+3351,40.7869946,-73.94164802,E 102 St & 1 Ave,In Service,25
+3352,40.67267243410948,-74.0087952464819,Sigourney St & Columbia St,In Service,21
+3353,40.6747844,-74.01612847,Reed St & Van Brunt St,In Service,24
+3354,40.668132,-73.97363831,3 St & Prospect Park West,In Service,31
+3355,40.76800889305947,-73.96845281124115,E 66 St & Madison Ave,In Service,25
+3356,40.7746671,-73.98470567,Amsterdam Ave & W 66 St,In Service,21
+3357,40.8008363,-73.9664492472,W 106 St & Amsterdam Ave,In Service,35
+3358,40.6711978,-73.97484126,Garfield Pl & 8 Ave,In Service,25
+3359,40.7691572,-73.96703464,E 68 St & Madison Ave,In Service,35
+3360,40.7829391,-73.9786517,Amsterdam Ave & W 79 St,In Service,25
+3361,40.6740886,-73.9787282,Carroll St & 6 Ave,In Service,23
+3362,40.7781314,-73.96069399,Madison Ave & E 82 St,In Service,34
+3363,40.7904828,-73.95033068,E 102 St & Park Ave,In Service,33
+3364,40.6751622,-73.9814832,Carroll St & 5 Ave,In Service,27
+3365,40.6703837,-73.97839676,3 St & 7 Ave,In Service,27
+3366,40.8021174,-73.9681805305,West End Ave & W 107 St,In Service,31
+3367,40.7922553,-73.95249933,5 Ave & E 103 St,In Service,39
+3368,40.6728155,-73.98352355,5 Ave & 3 St,In Service,30
+3369,40.772460677893974,-73.94682079553604,Coming Soon: 82 St & East End Ave,Not In Service,0
+3370,40.7727966,-73.95577801,E 78 St & 2 Ave,In Service,25
+3371,40.674613422475815,-73.98501142859459,4 Ave & 2 St,In Service,27
+3372,40.7689738,-73.95482273,E 74 St & 1 Ave,Not In Service,25
+3373,40.6750705,-73.98775226,3 St & 3 Ave,In Service,27
+3374,40.799484,-73.955613,Central Park North & Adam Clayton Powell Blvd,In Service,36
+3375,40.7699426,-73.96060712,3 Ave & E 72 St,In Service,35
+3376,40.76471851944339,-73.96222069859505,E 65 St & 2 Ave,In Service,39
+3377,40.6786115,-73.99037292,Carroll St & Bond St,In Service,25
+3378,40.773763,-73.96222088,E 76 St & Park Ave,In Service,28
+3379,40.7903051,-73.94755757,E 103 St & Lexington Ave,In Service,35
+3381,40.6777287,-73.99364123,3 St & Hoyt St,In Service,21
+3382,40.680611,-73.99475825,Carroll St & Smith St,In Service,31
+3383,40.804213,-73.96699104,Cathedral Pkwy & Broadway,In Service,25
+3384,40.6787242,-73.99599099,Smith St & 3 St,In Service,25
+3386,40.6809591,-73.99905709,1 Pl & Clinton St,In Service,27
+3387,40.7934337,-73.94945003,E 106 St & Madison Ave,In Service,25
+3388,40.6828003,-73.99990419,President St & Henry St,In Service,25
+3389,40.6830456,-74.00348559,Carroll St & Columbia St,In Service,28
+3390,40.79329668,-73.9432083,E 109 St & 3 Ave,In Service,24
+3391,40.7892529,-73.93956237,E 106 St & 1 Ave,In Service,25
+3392,40.6812117,-74.00860912,Commerce St & Van Brunt St,In Service,19
+3393,40.6794327,-74.00785041,Richards St & Delavan St,In Service,19
+3394,40.6769993,-74.00647134,Columbia St & W 9 St,In Service,21
+3395,40.6763744,-74.00324957,Henry St & W 9 St,In Service,19
+3396,40.6783563,-74.00014502,Clinton St & 4 Place,In Service,25
+3397,40.6763947,-73.99869893,Court St & Nelson St,In Service,25
+3398,40.6746957,-73.99785768,Smith St & 9 St,In Service,23
+3399,40.67260298150126,-73.98983001708984,7 St & 3 Ave,In Service,24
+3400,40.7961535,-73.94782145,E 110 St & Madison Ave,In Service,24
+3401,40.6724811,-73.99331394,2 Ave & 9 St,In Service,19
+3402,40.6902375,-73.99203074,Court St & State St,In Service,23
+3403,40.6705135,-73.98876585,4 Ave & 9 St,In Service,31
+3404,40.6704922,-73.98541675,7 St & 5 Ave,In Service,27
+3405,40.6704836,-73.98208968,5 St & 6 Ave,In Service,23
+3407,40.67909799721684,-73.98765474557877,Union St & Nevins St,In Service,23
+3408,40.6881529,-73.99520919,Congress St & Clinton St,Not In Service,27
+3409,40.6867443,-73.99063168,Bergen St & Smith St,In Service,35
+3410,40.6864442,-73.98759104,Dean St & Hoyt St,In Service,31
+3411,40.6849668,-73.98620772,Bond St & Bergen St,In Service,27
+3412,40.6853761,-73.98302136,Pacific St & Nevins St,In Service,18
+3413,40.6827549,-73.98258555,Wyckoff St & 3 Ave,In Service,22
+3414,40.680944723477296,-73.97567331790923,Bergen St & Flatbush Ave,In Service,33
+3415,40.6793307,-73.97519523,Prospect Pl & 6 Ave,In Service,25
+3416,40.6776147,-73.97324283,7 Ave & Park Pl,In Service,17
+3417,40.6795766,-73.97854971,Baltic St & 5 Ave,In Service,27
+3418,40.6750207,-73.97111473,Plaza St West & Flatbush Ave,In Service,33
+3419,40.6792788,-73.98154004,Douglass St & 4 Ave,In Service,27
+3420,40.6802133,-73.98432695,Douglass St & 3 Ave,In Service,21
+3421,40.6843549,-73.98901629,Hoyt St & Warren St,In Service,23
+3422,40.6859296,-74.00242364,Columbia St & Degraw St,In Service,21
+3423,40.6610633719006,-73.97945255041122,West Drive & Prospect Park West,In Service,29
+3424,40.791976,-73.945993,E 106 St & Lexington Ave,In Service,27
+3425,40.7892105,-73.94370784,2 Ave  & E 104 St,In Service,33
+3427,40.72430527250332,-73.99600982666016,Lafayette St & Jersey St,Not In Service,40
+3428,40.740983,-74.001702,8 Ave & W 16 St,In Service,25
+3429,40.68506807308177,-73.97790759801863,Hanson Pl & Ashland Pl,In Service,39
+3430,40.71907891179564,-73.94223690032959,Richardson St & N Henry St,In Service,19
+3431,40.746524,-73.977885,E 35 St & 3 Ave,In Service,26
+3434,40.79025417330419,-73.97718340158461,W 88 St & West End Ave,In Service,35
+3435,40.718822,-73.99596,Grand St & Elizabeth St,In Service,45
+3436,40.721319,-74.010065,Greenwich St & Hubert St,In Service,31
+3438,40.772248537721744,-73.95842134952545,E 76 St & 3 Ave,In Service,31
+3440,40.692418292578466,-73.98949474096298,Fulton St & Adams St,In Service,43
+3443,40.76132983124814,-73.97982001304626,W 52 St & 6 Ave,In Service,41
+3445,40.79181171501097,-73.9786022901535,Riverside Dr & W 89 St,In Service,39
+3447,40.76703432309872,-73.95622730255127,E 71 St & 1 Ave,In Service,41
+3449,40.721462562298164,-73.94800901412964,Eckford St & Engert Ave,In Service,18
+3452,40.71915571696044,-73.94885390996933,Bayard St & Leonard St,In Service,43
+3453,40.71335226222875,-73.9491033554077,Devoe St & Lorimer St,In Service,19
+3454,40.7103685423523,-73.94705951213837,Leonard St & Maujer St,In Service,24
+3455,40.68680820503432,-73.98036181926727,Schermerhorn St & 3 Ave,In Service,35
+3456,40.71638031973561,-73.94821286201477,Jackson St & Leonard St,In Service,22
+3459,40.75763227739443,-73.96930575370789,E 53 St & 3 Ave,In Service,34
