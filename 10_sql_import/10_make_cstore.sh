@@ -3,7 +3,7 @@ set -e
 
 psql `cat ~/.sqlconninfo` <<EOF 
 
-DROP FOREIGN TABLE bike_ingest_col IF EXISTS;
+DROP FOREIGN TABLE IF EXISTS bike_ingest_col;
 CREATE FOREIGN TABLE bike_ingest_col(
     biketrip_id BIGINT,
     trip_duration INTEGER,
@@ -24,7 +24,7 @@ CREATE FOREIGN TABLE bike_ingest_col(
 ) SERVER cstore_server
 OPTIONS(compression 'pglz');
 
-DROP FOREIGN TABLE subway_ingest_col IF EXISTS;
+DROP FOREIGN TABLE IF EXISTS subway_ingest_col;
 CREATE FOREIGN TABLE subway_ingest_col(
     turnstile_id BIGINT,
     endtime TIMESTAMP,
