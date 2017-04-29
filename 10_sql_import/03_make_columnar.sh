@@ -72,8 +72,16 @@ OPTIONS(compression 'pglz');
 INSERT INTO bike_ingest_col 
   SELECT * FROM bike_ingest ORDER BY start_station_id, start_time;
 INSERT INTO subway_ingest_col
-  SELECT * FROM subway_ingest ORDER BY ca, unit, endtime;
+  SELECT * FROM subway_ingest ORDER BY ca, unit, scp, endtime;
 INSERT INTO taxi_ingest_col
   SELECT * from taxi_ingest ORDER BY pickup_datetime;
+
+ANALYZE bike_ingest_col;
+ANALYZE subway_ingest_col;
+ANALYZE taxi_ingest_col;
+
+DROP TABLE bike_ingest;
+DROP TABLE subway_ingest;
+DROP TABLE taxi_ingest;
 
 EOF

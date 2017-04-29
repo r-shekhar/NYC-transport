@@ -7,7 +7,7 @@ SELECT
   biketrip_id,
   ST_SetSRID(ST_MakePoint(start_station_longitude, start_station_latitude), 4326) as start_station,
   ST_SetSRID(ST_MakePoint(end_station_longitude, end_station_latitude), 4326) as end_station
-FROM bike_ingest
+FROM bike_ingest_col
 WHERE (abs(start_station_longitude + 73.95) < 1.0 AND
        abs(start_station_latitude - 40.75) < 1.0 ) OR 
       (abs(end_station_longitude + 73.95) < 1.0 AND
@@ -82,7 +82,7 @@ CREATE FOREIGN TABLE bike_t(
 OPTIONS(compression 'pglz');  
 
 INSERT INTO bike_t 
-  SELECT * FROM bike_ingest 
+  SELECT * FROM bike_ingest_col
   FULL OUTER JOIN tmp_starts_ct USING (biketrip_id)
   FULL OUTER JOIN tmp_starts_tz USING (biketrip_id)
   FULL OUTER JOIN tmp_ends_ct USING (biketrip_id)
@@ -96,7 +96,7 @@ DROP TABLE tmp_starts_ct CASCADE;
 DROP TABLE tmp_starts_tz CASCADE;
 DROP TABLE tmp_ends_ct CASCADE;
 DROP TABLE tmp_ends_tz CASCADE;
-DROP TABLE bike_ingest;
+DROP FOREIGN TABLE bike_ingest_col;
 EOF
 
 
