@@ -40,48 +40,16 @@ CREATE FOREIGN TABLE subway_ingest_col(
 ) SERVER cstore_server
 OPTIONS(compression 'pglz');
 
-DROP FOREIGN TABLE IF EXISTS taxi_ingest_col;
-CREATE FOREIGN TABLE taxi_ingest_col(
-    trip_id BIGINT,
-    dropoff_datetime TIMESTAMP,
-    dropoff_latitude REAL,
-    dropoff_location_id REAL,
-    dropoff_longitude REAL,
-    ehail_fee REAL,
-    extra REAL,
-    fare_amount REAL,
-    improvement_surcharge REAL,
-    mta_tax REAL,
-    passenger_count INTEGER,
-    payment_type VARCHAR(10),
-    pickup_datetime TIMESTAMP,
-    pickup_latitude REAL,
-    pickup_location_id REAL,
-    pickup_longitude REAL,
-    rate_code_id INTEGER,
-    store_and_fwd_flag VARCHAR(10),
-    tip_amount REAL,
-    tolls_amount REAL,
-    total_amount REAL,
-    trip_distance REAL,
-    trip_type VARCHAR(10),
-    vendor_id VARCHAR(10)
-) SERVER cstore_server
-OPTIONS(compression 'pglz');
 
 INSERT INTO bike_ingest_col 
   SELECT * FROM bike_ingest ORDER BY start_station_id, start_time;
 INSERT INTO subway_ingest_col
   SELECT * FROM subway_ingest ORDER BY ca, unit, scp, endtime;
-INSERT INTO taxi_ingest_col
-  SELECT * from taxi_ingest ORDER BY pickup_datetime;
+
 
 ANALYZE bike_ingest_col;
 ANALYZE subway_ingest_col;
-ANALYZE taxi_ingest_col;
 
 DROP TABLE bike_ingest;
 DROP TABLE subway_ingest;
-DROP TABLE taxi_ingest;
-
 EOF
