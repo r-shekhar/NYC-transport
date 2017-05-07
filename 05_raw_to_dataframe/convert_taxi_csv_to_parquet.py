@@ -472,30 +472,32 @@ def main(client):
         assign_locations, "pickup_longitude", "pickup_latitude",
         "pickup_taxizone_id", "pickup_ct_id", meta=all_trips
         )
-
-    # all_trips = all_trips.repartition(npartitions=700)
-
     all_trips.to_parquet(
         os.path.join(config['parquet_output_path'], 'all_trips.parquet'),
         compression="SNAPPY", has_nulls=True,
         object_encoding='json')
 
-    all_trips = dd.read_parquet(
-        os.path.join(config['parquet_output_path'], 'all_trips.parquet'))
 
+    # all_trips = dd.read_parquet(
+    #     os.path.join(config['parquet_output_path'], 'all_trips.parquet'))
 
-    all_trips['dropoff_datetime'] = all_trips.dropoff_datetime.astype(str)
-    all_trips['pickup_datetime'] = all_trips.pickup_datetime.astype(str)
+    # all_trips = all_trips.set_index('pickup_datetime', npartitions=500)
+    # all_trips = all_trips.reset_index(drop=True)
 
-    all_trips['dropoff_datetime'] = all_trips.dropoff_datetime.str.replace('NaT', '1970-01-01 00:00:00')
-    all_trips['pickup_datetime'] = all_trips.pickup_datetime.str.replace('NaT', '1970-01-01 00:00:00')
+    # all_trips['dropoff_datetime'] = all_trips.dropoff_datetime.astype(str)
+    # all_trips['pickup_datetime'] = all_trips.pickup_datetime.astype(str)
 
+    # all_trips['dropoff_datetime'] = all_trips.dropoff_datetime.str.replace('NaT', '1970-01-01 00:00:00')
+    # all_trips['pickup_datetime'] = all_trips.pickup_datetime.str.replace('NaT', '1970-01-01 00:00:00')
+
+    # all_trips = dd.read_parquet(
+    #     os.path.join(config['parquet_output_path'], 'all_trips_repart.parquet'))
 
     # all_trips = all_trips.repartition(npartitions=1000)
 
-    all_trips.to_csv('/bigdata/csv/all_trips-*.csv', 
-        index=False,
-        name_function=lambda l: '{0:04d}'.format(l))
+    # all_trips.to_csv('/bigdata/csv/all_trips-*.csv', 
+    #     index=False,
+    #     name_function=lambda l: '{0:04d}'.format(l))
 
 
 if __name__ == '__main__':
