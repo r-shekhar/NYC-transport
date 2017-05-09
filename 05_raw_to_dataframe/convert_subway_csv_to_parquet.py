@@ -97,7 +97,7 @@ def parse_line(l):
         else:
             # Format not recognized
             # print so output can be looked at manually
-            # print(l)
+            print(l)
             RV = None
     except Exception as e:
         print(e)
@@ -134,7 +134,7 @@ def main(files, client):
     df = df.repartition(npartitions=50)
 
     df.to_parquet(os.path.join(config['parquet_output_path'], 'subway.parquet'),
-                  compression="SNAPPY", object_encoding='json'
+                  compression='SNAPPY', object_encoding='json'
                   )
     df = dd.read_parquet(
         os.path.join(config['parquet_output_path'], 'subway.parquet'))
@@ -146,7 +146,7 @@ def main(files, client):
 
 
 if __name__ == '__main__':
-    client = Client()
+    client = Client('localhost:8786')
     files = sorted(
         glob(os.path.join(config["subway_raw_data_path"],
                           'turnstile*.txt')))

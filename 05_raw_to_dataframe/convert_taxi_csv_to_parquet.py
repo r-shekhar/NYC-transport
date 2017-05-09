@@ -62,148 +62,6 @@ def trymakedirs(path):
         pass
 
 
-# def assign_taxi_zones(df, lon_var, lat_var, locid_var):
-#     """Joins DataFrame with Taxi Zones shapefile.
-
-#     This function takes longitude values provided by `lon_var`, and latitude
-#     values provided by `lat_var` in DataFrame `df`, and performs a spatial join
-#     with the NYC taxi_zones shapefile. 
-
-#     The shapefile is hard coded in, as this function makes a hard assumption of
-#     latitude and longitude coordinates. It also assumes latitude=0 and 
-#     longitude=0 is not a datapoint that can exist in your dataset. Which is 
-#     reasonable for a dataset of New York, but bad for a global dataset.
-
-#     Only rows where `df.lon_var`, `df.lat_var` are reasonably near New York,
-#     and `df.locid_var` is set to np.nan are updated. 
-
-#     Parameters
-#     ----------
-#     df : pandas.DataFrame or dask.DataFrame
-#         DataFrame containing latitudes, longitudes, and location_id columns.
-#     lon_var : string
-#         Name of column in `df` containing longitude values. Invalid values 
-#         should be np.nan.
-#     lat_var : string
-#         Name of column in `df` containing latitude values. Invalid values 
-#         should be np.nan
-#     locid_var : string
-#         Name of column in `df` containing taxi_zone location ids. Rows with
-#         valid, nonzero values are not overwritten. 
-#     """
-
-#     localdf = df[[lon_var, lat_var, locid_var]].copy()
-#     # localdf = localdf.reset_index()
-#     localdf[lon_var] = localdf[lon_var].fillna(value=0.)
-#     localdf[lat_var] = localdf[lat_var].fillna(value=0.)
-#     localdf['replace_locid'] = (localdf[locid_var].isnull()
-#                                 & (localdf[lon_var] != 0.)
-#                                 & (localdf[lat_var] != 0.))
-
-#     if (np.any(localdf['replace_locid'])):
-#         shape_df = geopandas.read_file('../shapefiles/taxi_zones_latlon.shp')
-#         shape_df.drop(['OBJECTID', "Shape_Area", "Shape_Leng", "borough", "zone"],
-#                       axis=1, inplace=True)
-
-#         try:
-#             local_gdf = geopandas.GeoDataFrame(
-#                 localdf, crs={'init': 'epsg:4326'},
-#                 geometry=[Point(xy) for xy in
-#                           zip(localdf[lon_var], localdf[lat_var])])
-
-#             local_gdf = geopandas.sjoin(
-#                 local_gdf, shape_df, how='left', op='intersects')
-
-#             # one point can intersect more than one zone -- for example if on
-#             # the boundary between two zones. Deduplicate by taking first valid.
-#             local_gdf = local_gdf[~local_gdf.index.duplicated(keep='first')]
-
-#             local_gdf.LocationID.values[~local_gdf.replace_locid] = (
-#                 (local_gdf[locid_var])[~local_gdf.replace_locid]).values
-
-#             return local_gdf.LocationID.rename(locid_var).astype(np.float64)
-#         except ValueError as ve:
-#             print(ve)
-#             print(ve.stacktrace())
-#             return df[locid_var]
-#     else:
-#         return df[locid_var]
-
-
-def assign_locations(df, lon_var, lat_var, locid_var, ctid_var):
-
-    df = df.reset_index(drop=True)
-
-    localdf = df[[lon_var, lat_var, locid_var]].copy()
-    localdf.columns = ['lon', 'lat', 'locid']
-
-    localdf = localdf[(localdf.locid.isnull()) 
-                    & ((localdf.lon + 74.).abs() < 1.)
-                    & ((localdf.lat - 40.75).abs() < 1.)]
-
-    if localdf.shape[0] > 0:
-
-        # perform spatial joins
-
-        import sqlalchemy, uuid, os
-
-        engine = sqlalchemy.create_engine(
-            open(os.path.expanduser('~/.sqlconninfo')).read())
-        conn = engine.connect()
-
-        uu = uuid.uuid1().hex
-        tableID = 'uu_{}'.format(uu)
-        tableIDLoc = 'uuloc_{}'.format(uu)
-
-
-        
-        localdf.to_sql(tableID, engine, index_label='trip_id')
-        conn.execute('''CREATE UNLOGGED TABLE {} AS
-        SELECT
-          trip_id,
-          ST_SetSRID(ST_MakePoint(lon, lat), 4326) as loc
-        FROM {}
-        WHERE locid IS NULL
-        ;
-        CREATE INDEX on {} USING GIST(loc);
-        '''.format(tableIDLoc, tableID, tableIDLoc))
-
-        df1 = pd.read_sql('''SELECT t.trip_id, n.gid as census_tract_id
-            FROM {} AS t, nyct2010 AS n
-            WHERE ST_Within(t.loc, n.geom) ORDER BY t.trip_id;'''.format(tableIDLoc), engine)
-        df2 = pd.read_sql('''SELECT t.trip_id, n.gid as taxi_zone_id
-            FROM {} AS t, taxi_zones AS n
-            WHERE ST_Within(t.loc, n.geom) ORDER BY t.trip_id;'''.format(tableIDLoc), engine)
-
-        conn.execute('DROP TABLE {}; DROP TABLE {};'.format(tableIDLoc, tableID))
-        conn.close()
-
-        df1 = df1.set_index('trip_id')
-        df2 = df2.set_index('trip_id')
-
-        returnVal =  df.merge(
-            df1, left_index=True, right_index=True, how='left', sort=True).merge(
-            df2, left_index=True, right_index=True, how='left', sort=True)
-
-        replace_condition = returnVal[locid_var].isnull() & returnVal['taxi_zone_id'].notnull()
-        print(returnVal)
-        print(type(returnVal[locid_var].values))
-
-        # v = returnVal[locid_var].values.copy()
-        # v2 = returnVal['taxi_zone_id'].values.copy()
-
-        # v[replace_condition] = v2[replace_condition]
-
-        returnVal[locid_var].ix[replace_condition] = returnVal['taxi_zone_id'].ix[replace_condition]
-        returnVal[ctid_var] = returnVal['census_tract_id']
-
-        returnVal = returnVal.drop(['taxi_zone_id', 'census_tract_id'], axis=1)
-
-        return returnVal
-    else:
-        # Don't have valid latitudes and longitudes, or locations have already 
-        # been assigned, so do nothing
-        return df
 
 def get_green():
     green_schema_pre_2015 = "vendor_id,pickup_datetime,dropoff_datetime,store_and_fwd_flag,rate_code_id,pickup_longitude,pickup_latitude,dropoff_longitude,dropoff_latitude,passenger_count,trip_distance,fare_amount,extra,mta_tax,tip_amount,tolls_amount,ehail_fee,total_amount,payment_type,trip_type,junk1,junk2"
@@ -464,44 +322,24 @@ def main(client):
 
     all_trips = all_trips[sorted(all_trips.columns)]
 
-    all_trips = all_trips.map_partitions(
-        assign_locations, "dropoff_longitude", "dropoff_latitude",
-        "dropoff_taxizone_id", "dropoff_ct_id", meta=all_trips
-        )
-    all_trips = all_trips.map_partitions(
-        assign_locations, "pickup_longitude", "pickup_latitude",
-        "pickup_taxizone_id", "pickup_ct_id", meta=all_trips
-        )
     all_trips.to_parquet(
         os.path.join(config['parquet_output_path'], 'all_trips.parquet'),
-        compression="SNAPPY", has_nulls=True,
+        compression='SNAPPY', has_nulls=True,
         object_encoding='json')
 
 
-    # all_trips = dd.read_parquet(
-    #     os.path.join(config['parquet_output_path'], 'all_trips.parquet'))
+    all_trips = dd.read_parquet(
+        os.path.join(config['parquet_output_path'], 'all_trips.parquet'))
 
-    # all_trips = all_trips.set_index('pickup_datetime', npartitions=500)
-    # all_trips = all_trips.reset_index(drop=True)
+    all_trips = all_trips.repartition(npartitions=1000)
 
-    # all_trips['dropoff_datetime'] = all_trips.dropoff_datetime.astype(str)
-    # all_trips['pickup_datetime'] = all_trips.pickup_datetime.astype(str)
-
-    # all_trips['dropoff_datetime'] = all_trips.dropoff_datetime.str.replace('NaT', '1970-01-01 00:00:00')
-    # all_trips['pickup_datetime'] = all_trips.pickup_datetime.str.replace('NaT', '1970-01-01 00:00:00')
-
-    # all_trips = dd.read_parquet(
-    #     os.path.join(config['parquet_output_path'], 'all_trips_repart.parquet'))
-
-    # all_trips = all_trips.repartition(npartitions=1000)
-
-    # all_trips.to_csv('/bigdata/csv/all_trips-*.csv', 
-    #     index=False,
-    #     name_function=lambda l: '{0:04d}'.format(l))
+    all_trips.to_csv('/bigdata/csv/all_trips-*.csv', 
+#        index=False,
+        name_function=lambda l: '{0:04d}'.format(l))
 
 
 if __name__ == '__main__':
-    client = Client()
+    client = Client('localhost:8786')
 
     # client=None
     # dask.set_options(get=dask.async.get_sync)
