@@ -28,13 +28,13 @@ dtype_list = {
     'junk1': object,
     'junk2': object,
     'mta_tax': np.float64,
-    'passenger_count': np.int64,
+    'passenger_count': object,
     'payment_type': object,
     #     'pickup_datetime': object, # set by parse_dates in pandas read_csv
     'pickup_latitude': np.float64,
     'pickup_taxizone_id': np.float64,
     'pickup_longitude': np.float64,
-    'rate_code_id': np.int64,
+    'rate_code_id': object,
     'store_and_fwd_flag': object,
     'tip_amount': np.float64,
     'tolls_amount': np.float64,
@@ -60,6 +60,74 @@ def trymakedirs(path):
         os.makedirs(path)
     except:
         pass
+
+
+def assign_taxi_zones(df, lon_var, lat_var, locid_var):
+    """Joins DataFrame with Taxi Zones shapefile.
+    This function takes longitude values provided by `lon_var`, and latitude
+    values provided by `lat_var` in DataFrame `df`, and performs a spatial join
+    with the NYC taxi_zones shapefile. 
+    The shapefile is hard coded in, as this function makes a hard assumption of
+    latitude and longitude coordinates. It also assumes latitude=0 and 
+    longitude=0 is not a datapoint that can exist in your dataset. Which is 
+    reasonable for a dataset of New York, but bad for a global dataset.
+    Only rows where `df.lon_var`, `df.lat_var` are reasonably near New York,
+    and `df.locid_var` is set to np.nan are updated. 
+    Parameters
+    ----------
+    df : pandas.DataFrame or dask.DataFrame
+        DataFrame containing latitudes, longitudes, and location_id columns.
+    lon_var : string
+        Name of column in `df` containing longitude values. Invalid values 
+        should be np.nan.
+    lat_var : string
+        Name of column in `df` containing latitude values. Invalid values 
+        should be np.nan
+    locid_var : string
+        Name of column in `df` containing taxi_zone location ids. Rows with
+        valid, nonzero values are not overwritten. 
+    """
+
+    import geopandas
+    from shapely.geometry import Point
+
+
+    localdf = df[[lon_var, lat_var, locid_var]].copy()
+    # localdf = localdf.reset_index()
+    localdf[lon_var] = localdf[lon_var].fillna(value=0.)
+    localdf[lat_var] = localdf[lat_var].fillna(value=0.)
+    localdf['replace_locid'] = (localdf[locid_var].isnull()
+                                & (localdf[lon_var] != 0.)
+                                & (localdf[lat_var] != 0.))
+
+    if (np.any(localdf['replace_locid'])):
+        shape_df = geopandas.read_file('../shapefiles/taxi_zones_latlon.shp')
+        shape_df.drop(['OBJECTID', "Shape_Area", "Shape_Leng", "borough", "zone"],
+                      axis=1, inplace=True)
+
+        try:
+            local_gdf = geopandas.GeoDataFrame(
+                localdf, crs={'init': 'epsg:4326'},
+                geometry=[Point(xy) for xy in
+                          zip(localdf[lon_var], localdf[lat_var])])
+
+            local_gdf = geopandas.sjoin(
+                local_gdf, shape_df, how='left', op='within')
+
+            # one point can intersect more than one zone -- for example if on
+            # the boundary between two zones. Deduplicate by taking first valid.
+            local_gdf = local_gdf[~local_gdf.index.duplicated(keep='first')]
+
+            local_gdf.LocationID.values[~local_gdf.replace_locid] = (
+                (local_gdf[locid_var])[~local_gdf.replace_locid]).values
+
+            return local_gdf.LocationID.rename(locid_var)
+        except ValueError as ve:
+            print(ve)
+            print(ve.stacktrace())
+            return df[locid_var]
+    else:
+        return df[locid_var]
 
 
 
@@ -151,7 +219,8 @@ def get_green():
 def get_yellow():
     yellow_schema_pre_2015 = "vendor_id,pickup_datetime,dropoff_datetime,passenger_count,trip_distance,pickup_longitude,pickup_latitude,rate_code_id,store_and_fwd_flag,dropoff_longitude,dropoff_latitude,payment_type,fare_amount,extra,mta_tax,tip_amount,tolls_amount,total_amount"
     yellow_glob_pre_2015 = glob(
-        os.path.join(config['taxi_raw_data_path'], 'yellow_tripdata_201[0-4]*.csv'))
+        os.path.join(config['taxi_raw_data_path'], 'yellow_tripdata_201[0-4]*.csv')) + glob(
+        os.path.join(config['taxi_raw_data_path'], 'yellow_tripdata_2009*.csv'))
 
     yellow_schema_2015_2016_h1 = "vendor_id,pickup_datetime,dropoff_datetime,passenger_count,trip_distance,pickup_longitude,pickup_latitude,rate_code_id,store_and_fwd_flag,dropoff_longitude,dropoff_latitude,payment_type,fare_amount,extra,mta_tax,tip_amount,tolls_amount,improvement_surcharge,total_amount"
     yellow_glob_2015_2016_h1 = glob(os.path.join(config['taxi_raw_data_path'], 'yellow_tripdata_2015*.csv')) + glob(
@@ -316,11 +385,15 @@ def main(client):
 
     all_trips = uber.append(green).append(yellow)
 
-    all_trips['pickup_ct_id'] = all_trips.pickup_taxizone_id.copy()
-    all_trips['pickup_ct_id'] = np.nan
-    all_trips['dropoff_ct_id'] = all_trips.pickup_ct_id.copy()
+    all_trips['dropoff_taxizone_id'] = all_trips.map_partitions(
+        assign_taxi_zones, "dropoff_longitude", "dropoff_latitude",
+        "dropoff_taxizone_id", meta=('dropoff_taxizone_id', np.float32))
+    all_trips['pickup_taxizone_id'] = all_trips.map_partitions(
+        assign_taxi_zones, "pickup_longitude", "pickup_latitude",
+        "pickup_taxizone_id", meta=('pickup_taxizone_id', np.float32))
 
     all_trips = all_trips[sorted(all_trips.columns)]
+    all_trips = all_trips.repartition(npartitions=1200)
 
     all_trips.to_parquet(
         os.path.join(config['parquet_output_path'], 'all_trips.parquet'),
@@ -331,15 +404,16 @@ def main(client):
     all_trips = dd.read_parquet(
         os.path.join(config['parquet_output_path'], 'all_trips.parquet'))
 
-    all_trips = all_trips.repartition(npartitions=1000)
+    # all_trips = all_trips.repartition(npartitions=1200)
 
-    all_trips.to_csv('/bigdata/csv/all_trips-*.csv', 
-#        index=False,
+    all_trips.to_csv('/bigdata/csv/all_trips-*.csv.gz', 
+       index=False, compression='gzip',
         name_function=lambda l: '{0:04d}'.format(l))
 
 
 if __name__ == '__main__':
     client = Client('localhost:8786')
+    client.restart()
 
     # client=None
     # dask.set_options(get=dask.async.get_sync)
