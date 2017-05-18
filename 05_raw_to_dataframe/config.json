@@ -4,5 +4,5 @@
     "uber_raw_data_path" : "/data/raw_data/uber/",
     "subway_raw_data_path" : "/data/raw_data/subway/",
     
-    "parquet_output_path" : "/bigdata/"
+    "parquet_output_path" : "/data/"
 }

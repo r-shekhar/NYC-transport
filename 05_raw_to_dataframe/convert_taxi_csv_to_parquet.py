@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+    #!/usr/bin/env python
 # coding: utf-8
 
 import dask
@@ -125,7 +125,7 @@ def assign_taxi_zones(df, lon_var, lat_var, locid_var):
         except ValueError as ve:
             print(ve)
             print(ve.stacktrace())
-            return df[locid_var]
+            return df[locid_var].astype(np.float64)
     else:
         return df[locid_var]
 
@@ -385,15 +385,19 @@ def main(client):
 
     all_trips = uber.append(green).append(yellow)
 
-    all_trips['dropoff_taxizone_id'] = all_trips.map_partitions(
-        assign_taxi_zones, "dropoff_longitude", "dropoff_latitude",
-        "dropoff_taxizone_id", meta=('dropoff_taxizone_id', np.float32))
-    all_trips['pickup_taxizone_id'] = all_trips.map_partitions(
-        assign_taxi_zones, "pickup_longitude", "pickup_latitude",
-        "pickup_taxizone_id", meta=('pickup_taxizone_id', np.float32))
+    # all_trips['dropoff_taxizone_id'] = all_trips.map_partitions(
+    #     assign_taxi_zones, "dropoff_longitude", "dropoff_latitude",
+    #     "dropoff_taxizone_id", meta=('dropoff_taxizone_id', np.float64))
+    # all_trips['pickup_taxizone_id'] = all_trips.map_partitions(
+    #     assign_taxi_zones, "pickup_longitude", "pickup_latitude",
+    #     "pickup_taxizone_id", meta=('pickup_taxizone_id', np.float64))
 
     all_trips = all_trips[sorted(all_trips.columns)]
     all_trips = all_trips.repartition(npartitions=1200)
+
+    
+    all_trips = all_trips.map_partitions(lambda x: x.sort_values('pickup_datetime'), 
+        meta=all_trips)
 
     all_trips.to_parquet(
         os.path.join(config['parquet_output_path'], 'all_trips.parquet'),
@@ -403,6 +407,12 @@ def main(client):
 
     all_trips = dd.read_parquet(
         os.path.join(config['parquet_output_path'], 'all_trips.parquet'))
+
+    all_trips = all_trips.set_index('pickup_datetime', npartitions=1000)
+    all_trips.to_parquet(
+        os.path.join(config['parquet_output_path'], 'all_trips_reindexed.parquet'),
+        compression='SNAPPY', has_nulls=True,
+        object_encoding='json')    
 
     # all_trips = all_trips.repartition(npartitions=1200)
 
