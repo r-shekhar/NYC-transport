@@ -302,33 +302,6 @@ def get_uber():
     uber_schema_2015="junk1,pickup_datetime,junk2,pickup_taxizone_id"
     uber_glob_2015 = glob(os.path.join(config['uber_raw_data_path'],'uber*15.csv'))
 
-    dtype_list = { 
-        # 'dropoff_datetime': np.int64,
-        'dropoff_latitude': np.float64,
-        'dropoff_taxizone_id': np.float64,
-        'dropoff_longitude': np.float64,
-        'ehail_fee': np.float64,
-        'extra': np.float64,
-        'fare_amount': np.float64,
-        'improvement_surcharge': np.float64,
-        'junk1': object,
-        'junk2': object,
-        'mta_tax': np.float64,
-        'passenger_count': np.int64,
-        'payment_type': object,
-    #     'pickup_datetime': object, # set by parse_dates in pandas read_csv
-        'pickup_latitude': np.float64,
-        'pickup_taxizone_id': np.float64,
-        'pickup_longitude': np.float64,
-        'rate_code_id': np.int64,
-        'store_and_fwd_flag': object,
-        'tip_amount': np.float64,
-        'tolls_amount': np.float64,
-        'total_amount': np.float64,
-        'trip_distance': np.float64,
-        'trip_type': object,
-        'vendor_id': object
-    }
 
     uber1 = dd.read_csv(uber_glob_2014, header=0,
                          na_values=["NA"], 
@@ -385,19 +358,22 @@ def main(client):
 
     all_trips = uber.append(green).append(yellow)
 
-    # all_trips['dropoff_taxizone_id'] = all_trips.map_partitions(
-    #     assign_taxi_zones, "dropoff_longitude", "dropoff_latitude",
-    #     "dropoff_taxizone_id", meta=('dropoff_taxizone_id', np.float64))
-    # all_trips['pickup_taxizone_id'] = all_trips.map_partitions(
-    #     assign_taxi_zones, "pickup_longitude", "pickup_latitude",
-    #     "pickup_taxizone_id", meta=('pickup_taxizone_id', np.float64))
+    all_trips['dropoff_taxizone_id'] = all_trips.map_partitions(
+        assign_taxi_zones, "dropoff_longitude", "dropoff_latitude",
+        "dropoff_taxizone_id", meta=('dropoff_taxizone_id', np.float64))
+    all_trips['pickup_taxizone_id'] = all_trips.map_partitions(
+        assign_taxi_zones, "pickup_longitude", "pickup_latitude",
+        "pickup_taxizone_id", meta=('pickup_taxizone_id', np.float64))
 
     all_trips = all_trips[sorted(all_trips.columns)]
-    all_trips = all_trips.repartition(npartitions=1200)
-
+    # all_trips = all_trips.repartition(npartitions=1200)
     
     all_trips = all_trips.map_partitions(lambda x: x.sort_values('pickup_datetime'), 
         meta=all_trips)
+
+    for fieldName in all_trips.columns:
+        if fieldName in dtype_list:
+            all_trips[fieldName] = all_trips[fieldName].astype(dtype_list[fieldName])
 
     all_trips.to_parquet(
         os.path.join(config['parquet_output_path'], 'all_trips.parquet'),
@@ -408,13 +384,11 @@ def main(client):
     all_trips = dd.read_parquet(
         os.path.join(config['parquet_output_path'], 'all_trips.parquet'))
 
-    all_trips = all_trips.set_index('pickup_datetime', npartitions=1000)
+    all_trips = all_trips.set_index('pickup_datetime', npartitions=2001)
     all_trips.to_parquet(
         os.path.join(config['parquet_output_path'], 'all_trips_reindexed.parquet'),
         compression='SNAPPY', has_nulls=True,
         object_encoding='json')    
-
-    # all_trips = all_trips.repartition(npartitions=1200)
 
     all_trips.to_csv('/bigdata/csv/all_trips-*.csv.gz', 
        index=False, compression='gzip',
