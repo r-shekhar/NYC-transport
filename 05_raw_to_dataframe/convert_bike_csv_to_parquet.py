@@ -148,15 +148,15 @@ def main(client):
         os.path.join(config['parquet_output_path'], 'citibike.parquet'),
         compression='SNAPPY', object_encoding='json', has_nulls=True)
 
-    df = dd.read_parquet(os.path.join(
-       config['parquet_output_path'], 'citibike.parquet'))
+#    df = dd.read_parquet(os.path.join(
+#       config['parquet_output_path'], 'citibike.parquet'))
 
 
-    df.to_csv(
-       os.path.join(config["parquet_output_path"], 'csv/citibike-*.csv'), 
-    #   index=False,
-       name_function=lambda l: '{0:04d}'.format(l)
-       )
+#    df.to_csv(
+#       os.path.join(config["parquet_output_path"], 'csv/citibike-*.csv'), 
+#    #   index=False,
+#       name_function=lambda l: '{0:04d}'.format(l)
+#       )
 
 
 
