@@ -161,7 +161,6 @@ def main(client):
 
 
 if __name__ == '__main__':
-    client = Client('localhost:8786')
-    client.restart()
+    client = Client()
 
     main(client)

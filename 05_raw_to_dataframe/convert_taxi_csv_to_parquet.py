@@ -376,28 +376,21 @@ def main(client):
             all_trips[fieldName] = all_trips[fieldName].astype(dtype_list[fieldName])
 
     all_trips.to_parquet(
+        os.path.join(config['parquet_output_path'], 'all_trips_unprocessed.parquet'),
+        compression='SNAPPY', has_nulls=True,
+        object_encoding='json')
+
+    all_trips = dd.read_parquet(
+        os.path.join(config['parquet_output_path'], 'all_trips_unprocessed.parquet'))
+    all_trips = all_trips.repartition(npartitions=501)
+    all_trips.to_parquet(
         os.path.join(config['parquet_output_path'], 'all_trips.parquet'),
         compression='SNAPPY', has_nulls=True,
         object_encoding='json')
 
 
-    all_trips = dd.read_parquet(
-        os.path.join(config['parquet_output_path'], 'all_trips.parquet'))
-
-    all_trips = all_trips.set_index('pickup_datetime', npartitions=2001)
-    all_trips.to_parquet(
-        os.path.join(config['parquet_output_path'], 'all_trips_reindexed.parquet'),
-        compression='SNAPPY', has_nulls=True,
-        object_encoding='json')    
-
-    all_trips.to_csv('/bigdata/csv/all_trips-*.csv.gz', 
-       index=False, compression='gzip',
-        name_function=lambda l: '{0:04d}'.format(l))
-
-
 if __name__ == '__main__':
-    client = Client('localhost:8786')
-    client.restart()
+    client = Client()
 
     # client=None
     # dask.set_options(get=dask.async.get_sync)

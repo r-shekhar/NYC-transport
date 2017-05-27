@@ -146,7 +146,7 @@ def main(files, client):
 
 
 if __name__ == '__main__':
-    client = Client('localhost:8786')
+    client = Client()
     files = sorted(
         glob(os.path.join(config["subway_raw_data_path"],
                           'turnstile*.txt')))
