@@ -79,9 +79,10 @@ def assign_taxi_zones(df, lon_var, lat_var, locid_var):
                                 & (localdf[lat_var] != 0.))
 
     if (np.any(localdf['replace_locid'])):
-        shape_df = geopandas.read_file('../shapefiles/taxi_zones_latlon.shp')
+        shape_df = geopandas.read_file('../shapefiles/taxi_zones.shp')
         shape_df.drop(['OBJECTID', "Shape_Area", "Shape_Leng", "borough", "zone"],
                       axis=1, inplace=True)
+        shape_df = shape_df.to_crs({'init': 'epsg:4326'})
 
         try:
             local_gdf = geopandas.GeoDataFrame(
@@ -91,13 +92,6 @@ def assign_taxi_zones(df, lon_var, lat_var, locid_var):
 
             local_gdf = geopandas.sjoin(
                 local_gdf, shape_df, how='left', op='within')
-
-            # one point can intersect more than one zone -- for example if on
-            # the boundary between two zones. Deduplicate by taking first valid.
-            local_gdf = local_gdf[~local_gdf.index.duplicated(keep='first')]
-
-            local_gdf.LocationID.values[~local_gdf.replace_locid] = (
-                (local_gdf[locid_var])[~local_gdf.replace_locid]).values
 
             return local_gdf.LocationID.rename(locid_var)
         except ValueError as ve:
@@ -136,28 +130,15 @@ def main(client):
         assign_taxi_zones, "end_station_longitude", "end_station_latitude",
         "end_taxizone_id", meta=('end_taxizone_id', np.float64))
 
-
     for x in ('start_taxizone_id', 'end_taxizone_id'):
         df[x] = df[x].astype(np.float64)
 
     df['start_station_name'] = df.start_station_name.str.strip('"')
     df['end_station_name'] = df.end_station_name.str.strip('"')
-
-
+    
     df.to_parquet(
         os.path.join(config['parquet_output_path'], 'citibike.parquet'),
-        compression='SNAPPY', object_encoding='json', has_nulls=True)
-
-#    df = dd.read_parquet(os.path.join(
-#       config['parquet_output_path'], 'citibike.parquet'))
-
-
-#    df.to_csv(
-#       os.path.join(config["parquet_output_path"], 'csv/citibike-*.csv'), 
-#    #   index=False,
-#       name_function=lambda l: '{0:04d}'.format(l)
-#       )
-
+        compression='GZIP', object_encoding='json', has_nulls=True)
 
 
 if __name__ == '__main__':

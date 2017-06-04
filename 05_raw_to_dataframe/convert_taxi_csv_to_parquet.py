@@ -101,9 +101,10 @@ def assign_taxi_zones(df, lon_var, lat_var, locid_var):
                                 & (localdf[lat_var] != 0.))
 
     if (np.any(localdf['replace_locid'])):
-        shape_df = geopandas.read_file('../shapefiles/taxi_zones_latlon.shp')
+        shape_df = geopandas.read_file('../shapefiles/taxi_zones.shp')
         shape_df.drop(['OBJECTID', "Shape_Area", "Shape_Leng", "borough", "zone"],
                       axis=1, inplace=True)
+        shape_df = shape_df.to_crs({'init': 'epsg:4326'})
 
         try:
             local_gdf = geopandas.GeoDataFrame(
@@ -374,15 +375,15 @@ def main(client):
     for fieldName in all_trips.columns:
         if fieldName in dtype_list:
             all_trips[fieldName] = all_trips[fieldName].astype(dtype_list[fieldName])
-
+            
     all_trips.to_parquet(
         os.path.join(config['parquet_output_path'], 'all_trips_unprocessed.parquet'),
-        compression='SNAPPY', has_nulls=True,
+        compression='GZIP', has_nulls=True,
         object_encoding='json')
 
-    all_trips = dd.read_parquet(
-        os.path.join(config['parquet_output_path'], 'all_trips_unprocessed.parquet'))
-    all_trips = all_trips.repartition(npartitions=501)
+    all_trips = dd.read_parquet(os.path.join(config['parquet_output_path'],
+                                             'all_trips_unprocessed.parquet'))
+    all_trips = all_trips.repartition(npartitions=600)
     all_trips.to_parquet(
         os.path.join(config['parquet_output_path'], 'all_trips.parquet'),
         compression='SNAPPY', has_nulls=True,
