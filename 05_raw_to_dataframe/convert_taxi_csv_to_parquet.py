@@ -381,14 +381,6 @@ def main(client):
         compression='GZIP', has_nulls=True,
         object_encoding='json')
 
-    all_trips = dd.read_parquet(os.path.join(config['parquet_output_path'],
-                                             'all_trips_unprocessed.parquet'))
-    all_trips = all_trips.repartition(npartitions=600)
-    all_trips.to_parquet(
-        os.path.join(config['parquet_output_path'], 'all_trips.parquet'),
-        compression='SNAPPY', has_nulls=True,
-        object_encoding='json')
-
 
 if __name__ == '__main__':
     client = Client()
