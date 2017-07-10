@@ -38,6 +38,9 @@ A [tutorial](https://r-shekhar.github.io/posts/data-science-environment.html)
 on my blog shows how to set up an environment compatible with this analysis 
 on Ubuntu. This tutorial has been tested locally and on Amazon EC2. 
 
+If you want to skip obtaining and processing the raw Taxi/Uber data into Parquet format,
+the processed dataset is available on Academic Torrents [here](http://academictorrents.com/details/4f465810b86c6b793d1c7556fe3936441081992e). 
+
 ## Steps
 
 1. Setup your conda environment with the modules above. 
@@ -71,3 +74,7 @@ https://github.com/r-shekhar/NYC-transport/tree/master/05_raw_to_dataframe).
    PySpark in [`06_repartition`](https://github.com/r-shekhar/NYC-transport/tree/master/06_repartition).
    This is especially useful for later stages, where queries are performed on
    Amazon EC2 using a distributed Spark engine using files on S3. 
+
+## Analysis
+
+Analysis scripts and notebooks live in the `15_dataframe_analysis` directory.  Some require PySpark 2+, but most simply require Dask and Jupyter. 
